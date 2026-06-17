@@ -1,0 +1,219 @@
+﻿@{
+    string alertType = TempData["AlertType"]?.ToString() ?? "";
+    string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
+    <div>
+        <h2>
+            <strong>@(char.ToUpper(ViewBag.Entity[0]) + ViewBag.Entity.Substring(1)) Registration</strong>
+        </h2>
+        <p class="text-muted">Register entities involved in your transport business</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        @if (!string.IsNullOrWhiteSpace(alertMsg))
+        {
+            <div class="alert alert-@alertType">@alertMsg</div>
+        }
+
+        @if (ViewBag.Entity == "company")
+        {
+            <form method="post" action="/registration/@ViewBag.Entity">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <input class="form-control" type="text" placeholder="Enter GSTIN" value="@Model.GSTIN">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <input class="form-control" type="text" placeholder="Company Name" value="@Model.CompanyName">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <input class="form-control" type="text" placeholder="Contact No" value="@Model.ContactNo">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <textarea class="form-control" placeholder="Enter Address" value="@Model.Address"></textarea>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button type="reset" class="btn btn-outline-dark">Cancel</button>
+                    <button type="submit" class="btn btn-dark">Submit</button>
+                </div>
+            </form>
+        }
+        else
+            @if (ViewBag.Entity == "party" || ViewBag.Entity == "broker")
+            {
+                <form method="post" action="/registration/@ViewBag.Entity">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" type="text" placeholder="Enter Aadhaar No">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" type="text" placeholder="Full Name">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input class="form-control" type="text" placeholder="Contact No">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <textarea class="form-control" placeholder="Enter Address"></textarea>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="reset" class="btn btn-outline-dark">Cancel</button>
+                        <button type="submit" class="btn btn-dark">Submit</button>
+                    </div>
+                </form>
+            }
+            else
+                @if (ViewBag.Entity == "vehicle")
+                {
+                    <form method="post" action="/registration/@ViewBag.Entity">
+                        <div id="vehicleRegistration_step1">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header">
+                                    Vehicle Details
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label>Vehicle Number</label>
+                                            <input class="form-control" type="text" placeholder="Enter Vehicle Number">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Vehicle Type</label>
+                                            <select class="form-control">
+                                                <option value="">Vehicle Type</option>
+                                                <option value="TRUCK">Truck</option>
+                                                <option value="TRAILER">Trailer</option>
+                                                <option value="CONTAINER">Container</option>
+                                                <option value="TANKER">Tanker</option>
+                                                <option value="OTHER">Other</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Capacity (in tons)</label>
+                                            <input class="form-control" type="text" placeholder="Capacity (in tons)">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Permit Type</label>
+                                            <select class="form-control">
+                                                <option value="">Select Permit Type</option>
+                                                <option value="NATIONAL">National Permit</option>
+                                                <option value="STATE">State Permit</option>
+                                                <option value="LOCAL">Local Permit</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Permit Number</label>
+                                            <input class="form-control" type="text" placeholder="Enter Permit Number">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Permit Expiry Date</label>
+                                            <input class="form-control" type="date">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Insurance Policy Number</label>
+                                            <input class="form-control" type="text" placeholder="Enter Insurance Number">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Insurance Expiry Date</label>
+                                            <input class="form-control" type="date">
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <button type="button" class="btn btn-outline-dark">Cancel</button>
+                                        <button type="button" class="btn btn-dark">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="vehicleRegistration_step2">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header">
+                                    Owner Information
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label>Owner Name</label>
+                                            <input class="form-control" type="text" placeholder="Enter full name of owner">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Aadhar Number</label>
+                                            <input class="form-control" type="text" placeholder="Enter Aadhar Number">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>PAN Number</label>
+                                            <input class="form-control" type="text" placeholder="Enter PAN Number">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-dark">Back</button>
+                                        <div>
+                                            <button type="button" class="btn btn-outline-dark">Cancel</button>
+                                            <button type="button" class="btn btn-dark">Next</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="vehicleRegistration_step3">
+                            <div class="card shadow-sm border-0">
+                                <div class="card-header">
+                                    Vehicle Documents
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label>Registration Certificate (RC)</label>
+                                            <input class="form-control" type="file">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Insurance Policy</label>
+                                            <input class="form-control" type="file">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>Permit Document</label>
+                                            <input class="form-control" type="file">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="button" class="btn btn-outline-dark">Back</button>
+                                        <div>
+                                            <button type="button" class="btn btn-outline-dark">Cancel</button>
+                                            <button type="submit" class="btn btn-dark">Next</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                }
+                else
+                    @if (ViewBag.Entity == "driver")
+                    {
+                        <form method="post" action="/registration/@ViewBag.Entity">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <input class="form-control" type="text" placeholder="Enter Driving License No">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <input class="form-control" type="text" placeholder="Full Name">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <input class="form-control" type="text" placeholder="Contact No">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <textarea class="form-control" placeholder="Enter Address"></textarea>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button type="reset" class="btn btn-outline-dark">Cancel</button>
+                                <button type="submit" class="btn btn-dark">Submit</button>
+                            </div>
+                        </form>
+                    }
+    </div>
+</div>

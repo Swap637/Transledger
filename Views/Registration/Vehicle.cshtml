@@ -1,0 +1,221 @@
+﻿@model TransLedger.Models.EntityAccountViewModel
+@{
+    string alertType = TempData["AlertType"]?.ToString() ?? "";
+    string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+    int step = ViewBag.Step ?? 0;
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
+    <div>
+        <h2>
+            <strong>Vehicle Registration</strong>
+        </h2>
+    </div>
+</div>
+
+<div class="steppers mb-3">
+    <div data-step="1">
+        <div class="step-icon">1</div>
+        <div class="step-title">Vehicle Details</div>
+        <span class="step-right-bar"></span>
+    </div>
+    <div data-step="2">
+        <div class="step-icon">2</div>
+        <div class="step-title">Owner  Information</div>
+        <span class="step-left-bar"></span>
+        <span class="step-right-bar"></span>
+    </div>
+    <div data-step="3">
+        <div class="step-icon">3</div>
+        <div class="step-title">Vehicle Documents</div>
+        <span class="step-left-bar"></span>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(alertMsg))
+{
+    <div class="alert alert-@alertType">@alertMsg</div>
+}
+
+<form method="post" id="vehicleForm" action="/registration/vehicle/register">
+    <div class="step-view" data-step="1">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <h4>
+                        <strong>Vehicle Details</strong>
+                    </h4>
+                    <p class="text-muted">Enter the details of the vehicle</p>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Vehicle Number</label>
+                        <input class="form-control" placeholder="Enter Vehicle Number" asp-for="VehicleNumber" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Vehicle Type</label>
+                        <select class="form-control" asp-for="VehicleType">
+                            <option value="">Vehicle Type</option>
+                            <option value="TRUCK">Truck</option>
+                            <option value="LCV">LCV</option>
+                            <option value="TRAILER">Trailer</option>
+                            <option value="JCB32Feet">JCB 32 Feet</option>
+                            <option value="CONTAINER">Container</option>
+                            <option value="TANKER">Tanker</option>
+                            <option value="PICKUP">Pickup</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Capacity (in tons)</label>
+                        <input class="form-control" type="text" placeholder="Capacity (in tons)" asp-for="CapacityInTons">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Permit Type</label>
+                        <select class="form-control" asp-for="PermitType">
+                            <option value="">Select Permit Type</option>
+                            <option value="NATIONAL">National Permit</option>
+                            <option value="STATE">State Permit</option>
+                            <option value="LOCAL">Local Permit</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Permit Number</label>
+                        <input class="form-control" type="text" placeholder="Enter Permit Number" asp-for="PermitNumber" />
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Permit Expiry Date</label>
+                        <input class="form-control" type="date" asp-for="PermitExpiryDate">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Insurance Policy Number</label>
+                        <input class="form-control" type="text" placeholder="Enter Insurance Number" asp-for="InsurancePolicyNumber">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Insurance Expiry Date</label>
+                        <input class="form-control" type="date" asp-for="InsuranceExpiryDate">
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <button type="button" class="btn btn-outline-dark">Cancel</button>
+                    <button type="button" class="btn btn-dark" id="btnMoveToStep2">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div class="step-view" data-step="2">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <h4>
+                        <strong>Owner  Information</strong>
+                    </h4>
+                    <p class="text-muted">Enter the information of the owner</p>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Owner Name</label>
+                        <input class="form-control" type="text" placeholder="Enter full name of owner" asp-for="OwnerName">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Aadhar Number</label>
+                        <input class="form-control" type="text" placeholder="Enter Aadhar Number" asp-for="AadharNumber">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">PAN Number</label>
+                        <input class="form-control" type="text" placeholder="Enter PAN Number" asp-for="PAN">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-dark" id="backToStep1">Back</button>
+                    <div>
+                        <button type="button" class="btn btn-outline-dark">Cancel</button>
+                        <button type="button" class="btn btn-dark" id="btnMoveToStep3">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="step-view" data-step="3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <h4>
+                        <strong>Vehicle Documents</strong>
+                    </h4>
+                    <p class="text-muted">Upload the douments of the vehicle</p>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Registration Certificate (RC)</label>
+                        <input class="form-control" type="file">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Insurance Policy</label>
+                        <input class="form-control" type="file">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Permit Document</label>
+                        <input class="form-control" type="file">
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-outline-dark" id="backToStep2">Back</button>
+                    <div>
+                        <button type="button" class="btn btn-outline-dark">Cancel</button>
+                        <button type="submit" class="btn btn-dark">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        if(@step > 0){
+            initStepper("vehicleForm", @step);
+        } else{
+            initStepper("vehicleForm");
+        }
+
+        $('#btnMoveToStep2').on('click',() => {
+            nextStep('vehicleForm');
+        })
+        
+        $('#btnMoveToStep3').on('click',() => {
+            nextStep('vehicleForm');
+        })
+        
+        $('#backToStep1').on('click',() => {
+            prevStep('vehicleForm');
+        })
+        
+        $('#backToStep2').on('click',() => {
+            prevStep('vehicleForm');
+        })
+    </script>
+}

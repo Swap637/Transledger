@@ -1,0 +1,92 @@
+﻿@model TransLedger.Models.EntityAccountViewModel
+@{
+    string alertType = TempData["AlertType"]?.ToString() ?? "";
+    string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
+    <div>
+        <h2>
+            <strong>Driver Registration</strong>
+        </h2>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(alertMsg))
+{
+    <div class="alert alert-@alertType">@alertMsg</div>
+}
+
+<form method="post" action="/registration/driver/register">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <h4>
+                    <strong>Basic Details</strong>
+                </h4>
+                <p class="text-muted">Enter the details of the driver</p>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Driver Name</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="100" onkeypress="return /[a-zA-Z]/i.test(event.key)" asp-for="Name" placeholder="Enter Driver Name" asp-for="Name" required />
+                </div>
+
+        
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Aadhar Number</label><span class="text-danger">*</span>
+                    <input class="form-control" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" maxlength="12" minlength="12" pattern="[0-9]{12}" placeholder="Enter Aadhar Number" asp-for="AadharNumber" required />
+                </div>
+                 <div class="col-md-6 mb-3">
+                    <label class="form-label">License Number</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="20" placeholder="Enter License Number" asp-for="LicenseNumber" required />
+                </div>
+
+            @*     <div class="col-md-6 mb-3">
+                    <label class="form-label">License Number</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="12" minlength="12" placeholder="Enter License Number" asp-for="LicenseNumber" required />
+                </div> *@
+
+          @*       <div class="col-md-6 mb-3">
+                    <label class="form-label">License Expiry</label>
+                    <input class="form-control" type="date" asp-for="LicenseExpiry" />
+                </div> *@
+                
+@*                 <div class="col-md-6 mb-3">
+                    <label class="form-label">PAN</label>
+                    <input class="form-control" placeholder="Enter PAN Number" asp-for="PAN" />
+                </div> *@
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Contact No</label><span class="text-danger">*</span>
+                    <input class="form-control" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" minlength="10" placeholder="Enter Contact Number" maxlength="10" asp-for="ContactNo" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Alternative Mobile No</label><span class="text-danger">*</span>
+                    <input type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" class="form-control" maxlength="10" placeholder="Enter Alternative Mobile No." asp-for="AlterNativeMobileNo" onpaste="return false;" />
+                </div>
+              @*   <div class="col-md-6 mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control" placeholder="Enter Email Address" asp-for="Email" />
+                </div> *@
+
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Address</label><span class="text-danger">*</span>
+                    <textarea class="form-control" maxlength="=200" rows="3" placeholder="Enter Address" asp-for="Address" required></textarea>
+                </div>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="reset" class="btn btn-outline-dark">Cancel</button>
+                <button type="submit" class="btn btn-dark">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

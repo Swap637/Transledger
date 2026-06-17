@@ -1,0 +1,95 @@
+﻿@using System.Data;
+@{
+    string alertType = TempData["AlertType"]?.ToString() ?? "";
+    string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+    DataTable dt = ViewBag.List;
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
+    <div>
+        <h2>
+            <strong>Ledger</strong>
+        </h2>
+        @* <p class="text-muted">Record a payment transaction</p> *@
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(alertMsg))
+{
+    <div class="alert alert-@alertType">@alertMsg</div>
+}
+
+<div class="card shadow-sm border-0 mb-5">
+    <div class="card-body p-4">
+        <div class="mb-4">
+            <h4>
+                <strong>Transactions</strong>
+            </h4>
+            <p class="text-muted">You can find your all ledger transactions here.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr class="text-center">
+                        <th width="60"></th>
+                        <th>Date</th>
+                        <th>Entity/Account</th>
+                        <th>Remark</th>
+                        <th>Reference Number</th>
+                        <th>Debit</th>
+                        <th>Credit</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (dt != null && dt.Rows.Count > 0)
+                    {
+                        int i = 1;
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            string debit = "";
+                            string credit = "";
+
+                            if (row["Debit"] != DBNull.Value)
+                            {
+                                debit = "- " + Convert.ToDecimal(row["Debit"]).ToString("0.00");
+                            }
+
+                            if (row["Credit"] != DBNull.Value)
+                            {
+                                credit = "+ " + Convert.ToDecimal(row["Credit"]).ToString("0.00");
+                            }
+
+                            <tr>
+                                <td>@i</td>
+                                <td>@Convert.ToDateTime(row["TransactionDate"]).ToString("dd-MMM-yyyy")</td>
+                                <td>@row["EntityAccount"]</td>
+                                <td>@row["Remark"]</td>
+                                <td>@row["ReferenceNumber"]</td>
+                                <td class="text-danger text-end">@debit</td>
+                                <td class="text-success text-end">@credit</td>
+                            </tr>
+
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="py-5">
+                                <h6 class="text-center text-muted"><b>No data present.</b></h6>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

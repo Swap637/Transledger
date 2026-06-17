@@ -1,0 +1,88 @@
+﻿@model TransLedger.Models.EntityAccountViewModel
+
+@{
+    string alertType = TempData["AlertType"]?.ToString() ?? "";
+    string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
+    <div>
+        <h2>
+            <strong>Broker Registration</strong>
+        </h2>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(alertMsg))
+{
+    <div class="alert alert-@alertType">@alertMsg</div>
+}
+
+<form method="post" action="/registration/broker/register">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <h4>
+                    <strong>Basic Details</strong>
+                </h4>
+                <p class="text-muted">Enter the details of the comany</p>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Broker Name</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="100" onkeypress="return /[a-zA-Z]/i.test(event.key)" placeholder="Enter Broker Name" asp-for="Name" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">PAN</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="10" minlength="10" placeholder="Enter PAN Number" asp-for="PAN" required />
+                </div>
+
+                 <div class="col-md-6 mb-3">
+                    <label class="form-label">Aadhar Number</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="12" minlength="12" placeholder="Enter PAN Number" asp-for="AadharNumber" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Contact Person Name</label><span class="text-danger">*</span>
+                    <input type="text" class="form-control" onkeypress="return /[a-zA-Z]/i.test(event.key)" maxlength="100" placeholder="Enter Contact Person Name" asp-for="ContactPersonName" required onpaste="return false;"/>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Contact No</label><span class="text-danger">*</span>
+                    <input type="text" required onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" class="form-control" maxlength="10" placeholder="Enter Contact Number" asp-for="ContactNo" onpaste="return false;" />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Alternative Mobile No</label>
+                    <input type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" class="form-control" maxlength="10" placeholder="Enter Alternative Mobile No." asp-for="AlterNativeMobileNo" onpaste="return false;" />
+                </div>
+
+               <div class="col-md-6 mb-3">
+                    <label class="form-label">Commission Percent</label><span class="text-danger">*</span>
+                    <input class="form-control" placeholder="Enter Commission Percent" asp-for="CommissionPercent" />
+                </div>
+ 
+               
+
+
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Address</label><span class="text-danger">*</span>
+                    <textarea class="form-control" maxlength="100" rows="3" placeholder="Enter Address" asp-for="Address" required></textarea>
+                </div>
+
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="reset" class="btn btn-outline-dark">Cancel</button>
+                <button type="submit" class="btn btn-dark">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

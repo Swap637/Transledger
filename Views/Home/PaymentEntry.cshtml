@@ -1,0 +1,156 @@
+﻿@model TransLedger.Models.PaymentEntryViewModel
+@{
+    string alertType = TempData["AlertType"]?.ToString() ?? "";
+    string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
+    <div>
+        <h2>
+            <strong>Payment Entry</strong>
+        </h2>
+        <p class="text-muted">Record a payment transaction</p>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(alertMsg))
+{
+    <div class="alert alert-@alertType">@alertMsg</div>
+}
+
+<form method="post">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <h4>
+                    <strong>Payment Details</strong>
+                </h4>
+                <p class="text-muted">Enter the details of the payment</p>
+            </div>
+
+            <div class="row">
+
+                <div class="col-12 mb-3 d-flex gap-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="PaymentType" value="RECEIPT" id="receipt" checked>
+                        <label class="form-check-label" for="receipt">
+                            <span class="text-success"><i class="bi bi-currency-rupee"></i></span> Receipt
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" asp-for="PaymentType" value="PAYMENT" id="payment">
+                        <label class="form-check-label" for="payment">
+                            <span class="text-danger"><i class="bi bi-credit-card-2-back"></i></span> Payment
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Entity Type</label>
+                    <select class="form-control" id="entityType" required>
+                        <option value="">Select Entity Type</option>
+                        <option value="COMPANY">Company</option>
+                        <option value="PARTY">Party</option>
+                        <option value="BROKER">Broker</option>
+                        <option value="VEHICLE">Vehicle</option>
+                        <option value="DRIVER">Driver</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Entity</label>
+                    <select class="form-control" id="entity" asp-for="EntityAccountId" disabled required>
+                        <option value="">Select Entity</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Amount (₹)</label>
+                    <input class="form-control" placeholder="0.00" asp-for="Amount" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Date</label>
+                    <input class="form-control" type="date" asp-for="Date" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Mode of Payment</label>
+                    <select class="form-control" id="paymentMode" asp-for="ModeOfPayment" required>
+                        <option value="">Select Payment Mode</option>
+                        <option value="CASH">Cash</option>
+                        <option value="UPI">UPI</option>
+                        <option value="TRANSFER">Bank Transfer</option>
+                        <option value="CHEQUE">Cheque</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Reference Number</label>
+                    <input class="form-control" placeholder="UPI ID, Cheque No, etc" id="refNo" asp-for="ReferenceNumber" disabled />
+                </div>
+
+                <div class="col-md-12 mb-3">
+                    <label class="form-label">Remarks</label>
+                    <textarea class="form-control" rows="3" placeholder="Enter Remarks" asp-for="Remarks" required></textarea>
+                </div>
+            </div>
+
+            <div class="text-end mt-3">
+                <button type="reset" class="btn btn-outline-dark" onclick="location.reload()">Cancel</button>
+                <button type="submit" class="btn btn-dark">Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $('#entityType').on('change', function () {
+            let entityType = $('#entityType').val();
+            if (entityType) {
+                $('#entity').prop('disabled', true);
+
+                $.ajax({
+                    url: '/getentitylist/' + entityType,
+                    type: 'GET',
+                    success: function (response) {
+                        let options = '<option value="">Select Entity</option>';
+
+                        response.forEach(item => {
+                            options += `<option value="${item.entityAccountId}">${item.entityAccount}</option>`;
+                        });
+
+                        $('#entity').html(options).prop('disabled', false);
+                    },
+                    error: function () {
+                        $('#entity')
+                            .html('<option value="">No entity present</option>')
+                            .prop('disabled', false);
+                    }
+                });
+
+            } else {
+                $('#entity')
+                    .html('<option value="">Select Entity</option>')
+                    .prop('disabled', true);
+            }
+        });
+
+        $('#paymentMode').on('change', function () {
+            if ($('#paymentMode').val() == 'UPI' || $('#paymentMode').val() == 'TRANSFER' ||
+                $('#paymentMode').val() == 'CHEQUE' || $('#paymentMode').val() == 'UPI' ||
+                $('#paymentMode').val() == 'OTHER') {
+
+                $('#refNo').prop('disabled', false).prop('required', true).val('');
+            }
+            else {
+                $('#refNo').prop('disabled', true).prop('required', false).val('');
+            }
+        });
+    </script>
+}

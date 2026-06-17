@@ -1,0 +1,103 @@
+﻿@using System.Data;
+
+@{
+    string alertType = TempData["AlertType"]?.ToString() ?? "";
+    string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+    DataTable dt = ViewBag.List;
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
+    <div>
+        <h2>
+            <strong>List Of Vehicle</strong>
+        </h2>
+        @* <p class="text-muted">Record a payment transaction</p> *@
+    </div>
+    <div class="text-md-end mt-3 mt-md-0">
+        <a href="/registration/vehicle" class="btn btn-dark">
+            <i class="bi bi-plus-lg"></i> New Vehicle
+        </a>
+    </div>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(alertMsg))
+{
+    <div class="alert alert-@alertType">@alertMsg</div>
+}
+
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+
+            <thead>
+                <tr>
+                    <th width="60"></th>
+                    <th>Vehicle Number</th>
+                    <th>Vehicle Type</th>
+                    <th>Capacity (In Tons)</th>
+                    <th>Permit Type</th>
+                    <th>Permit Number</th>
+                    <th>Permit Expiry Date</th>
+                    <th>Insurance Policy Number</th>
+                    <th>Insurance Expiry Date</th>
+                    <th>Owner Name</th>
+                    <th>Aadhar Number</th>
+                    <th>PAN</th>
+                    <th>Address</th>
+                    <th width="140">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (dt != null && dt.Rows.Count > 0)
+                {
+                    int i = 1;
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        <tr>
+                            <td>@i</td>
+                            <td>@row["VehicleNumber"]</td>
+                            <td>@row["VehicleType"]</td>
+                            <td>@row["CapacityInTons"]</td>
+                            <td>@row["PermitType"]</td>
+                            <td>@row["PermitNumber"]</td>
+                            <td>@row["PermitExpiryDate"]</td>
+                            <td>@row["InsurancePolicyNumber"]</td>
+                            <td>@row["InsuranceExpiryDate"]</td>
+                            <td>@row["OwnerName"]</td>
+                            <td>@row["AadharNumber"]</td>
+                            <td>@row["PAN"]</td>
+                            <td>@row["Address"]</td>
+                            <td width="140">
+                                <div class="d-flex gap-3">
+                                    <a class="text-muted fs-6" href="#">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+
+                                    <a class="text-muted fs-6" href="#">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+
+                        i++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="14" class="py-5">
+                            <h6 class="text-center text-muted"><b>No data present.</b></h6>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
