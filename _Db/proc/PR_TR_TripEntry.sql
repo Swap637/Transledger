@@ -8,7 +8,10 @@ CREATE PROCEDURE PR_TR_TripEntry
     @p_Mode             INT            = 0 ,
     @p_VehicleNumber      INT            = NULL ,
     @p_EntityAccountId    INT            = NULL ,
-    @p_Amount             DECIMAL(18,2)  = NULL,
+    @p_AmtforOwner        DECIMAL(18,2)  = NULL,
+	@p_AmtForBroker             DECIMAL(18,2)  = NULL,
+	@p_AmtForBkingPrty             DECIMAL(18,2)  = NULL,
+	@p_Amount             DECIMAL(18,2)  = NULL,
     @p_Date               DATE           = NULL,
     @p_Remarks            VARCHAR(250)   = NULL,
     @p_LoadingPoint       VARCHAR(100)   = NULL,
@@ -16,22 +19,29 @@ CREATE PROCEDURE PR_TR_TripEntry
     @p_LRNumber           VARCHAR(20)    = NULL,
     @p_BookingPartyId     INT            = NULL ,
     @p_BrokerId           INT            = NULL,
+	@p_Driverid           INT            = NULL,
     @p_CommissionBrokerage DECIMAL(18,2) = NULL
 )
 AS
+/*
+--<Changes>----------------------------------------------------------------------------------------------------------------------
+-- Name       Version    Date           Purpose
+-- Swapnil k  1.0.0.0    19-06-2026      Made changes to save the trio entry details
+--</Changes>---------------------------------------------------------------------------------------------------------------------
+*/
 BEGIN
     SET NOCOUNT ON;
+	-- <Variable Declaration>
+	 DECLARE @TripNumber AS VARCHAR(20)
+	-- </Variable Declaration>
 	IF ISNULL(@p_Mode,0)=0
 		BEGIN
-
+		
+		 SET @TripNumber  =   CONVERT(VARCHAR(6), @p_Date, 12); 
 		 INSERT INTO b_TripEntry
-			(VehicleId,BookingPartyId,BrokerId,TripDate,LoadingPoint,UnloadingPoint,LRNumber,
-			HiringAmount,Remarks,TripStatus,CreatedBy,CreatedOn)
-		 VALUES
-			(@p_VehicleNumber,@p_BookingPartyId,@p_BrokerId,@p_Date,@p_LoadingPoint,      
-			 @p_UnloadingPoint,@p_LRNumber,@p_Amount,@p_Remarks,0,        
-			1,GETDATE()           
-			);
+			(TripNumber,LRBiltyNumber,VehicleId,TripDate,AmtforOwner,BrokerId,AmtForBroker,BookingPartyId,AmtForBkingPrty,Driverid,LoadingPoint,UnloadingPoint,Remarks,TripStatus,CreatedBy,CreatedOn)
+		 VALUES(@TripNumber,@p_LRNumber,@p_VehicleNumber,@p_Date,@p_AmtforOwner,@p_BrokerId,@p_AmtForBroker,@p_BookingPartyId,@p_AmtForBkingPrty,@p_Driverid,@p_LoadingPoint,      
+			 @p_UnloadingPoint,@p_Remarks,0,1,GETDATE());
 		SELECT SCOPE_IDENTITY() AS NewTripId;
 
 	END
