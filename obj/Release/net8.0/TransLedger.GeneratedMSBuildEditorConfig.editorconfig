@@ -1,0 +1,117 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = TransLedger
+build_property.RootNamespace = TransLedger
+build_property.ProjectDir = E:\JAVASTS\Transport Project\TransLedger\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = E:\JAVASTS\Transport Project\TransLedger
+build_property._RazorSourceGeneratorDebug = 
+build_property.EffectiveAnalysisLevelStyle = 8.0
+build_property.EnableCodeStyleSeverity = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Auth/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxMb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/Accounts.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxBY2NvdW50cy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/EntityRegistration.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxFbnRpdHlSZWdpc3RyYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/Ledger.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMZWRnZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/ListOfBroker.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMaXN0T2ZCcm9rZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/ListOfComapany.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMaXN0T2ZDb21hcGFueS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/ListOfDriver.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMaXN0T2ZEcml2ZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/ListOfParty.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMaXN0T2ZQYXJ0eS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/ListOfVehicle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMaXN0T2ZWZWhpY2xlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/PaymentEntry.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQYXltZW50RW50cnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/Registration.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZWdpc3RyYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/Transactions.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUcmFuc2FjdGlvbnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Home/TripEntry.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUcmlwRW50cnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Registration/Broker.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaXN0cmF0aW9uXEJyb2tlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Registration/Company.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaXN0cmF0aW9uXENvbXBhbnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Registration/Driver.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaXN0cmF0aW9uXERyaXZlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Registration/Party.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaXN0cmF0aW9uXFBhcnR5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Registration/Vehicle.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmVnaXN0cmF0aW9uXFZlaGljbGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Shared/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/JAVASTS/Transport Project/TransLedger/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = b-7ttjcc7dgh

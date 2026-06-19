@@ -1,0 +1,75 @@
+﻿:root {
+    --icont-default-color: rgb(236 236 236);
+}
+
+.step-view{
+    display: none;
+}
+
+.step-view.active{
+    display: block;
+}
+
+.steppers {
+    display: flex;
+    justify-content: space-between;
+    /*max-width: 1500px;*/
+    width: 100%;
+    margin: auto;
+    position: relative;
+}
+
+.steppers > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    z-index: 1;
+    text-align: center;
+}
+
+.step-icon {
+    background: var(--icont-default-color);
+    border-radius: 50%;
+    height: 45px;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+.step-left-bar,
+.step-right-bar {
+    background: var(--icont-default-color);
+    height: 2px;
+    width:50%;
+    position: absolute;
+    top: 22px;
+    z-index: -1;
+}
+
+.step-left-bar {
+    left: 0;
+}
+
+.step-right-bar {
+    right: 0;
+}
+
+.completed > .step-icon,
+.active > .step-icon,
+.completed > .step-left-bar,
+.completed > .step-right-bar,
+.active > .step-left-bar {
+    background: #212529;
+    color: white;
+}
+
+.step-title{
+    max-width: 120px;
+    padding-top: 10pxSS
+}
