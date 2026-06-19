@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TransLedger")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+92261f8aa01468d60f4e1f0a3af7ee55b58d6b7f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9a6e31f8ffae8c4adddf10f602540dcd06655ec1")]
 [assembly: System.Reflection.AssemblyProductAttribute("TransLedger")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TransLedger")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
