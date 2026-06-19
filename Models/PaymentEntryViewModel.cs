@@ -9,5 +9,9 @@
         public string ModeOfPayment { get; set; }
         public string ReferenceNumber { get; set; }
         public string Remarks { get; set; }
+        public string OtherPaymentMethod { get; set; }
+        public string tripNumber { get; set; }
+        public string Credited_Accountid { get; set; }
+        public int HiddenTripid { get; set; }
     }
 }

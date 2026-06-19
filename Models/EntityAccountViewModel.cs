@@ -60,5 +60,6 @@
         public DateTime RegisteredOn { get; set; } = DateTime.Now;
         public string? ContactPersonName { get; set; }
         public string? AlterNativeMobileNo { get; set; }
+        public string? AccountNumber { get; set; }
     }
 }

@@ -11,4 +11,12 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="E:\JAVASTS\Transport Project\TransLedger\Models\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="E:\JAVASTS\Transport Project\TransLedger\Models\.editorconfig" />
+  </ItemGroup>
+
 </Project>

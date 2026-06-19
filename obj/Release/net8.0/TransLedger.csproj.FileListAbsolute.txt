@@ -75,3 +75,4 @@ E:\JAVASTS\Transport Project\TransLedger\obj\Release\net8.0\refint\TransLedger.d
 E:\JAVASTS\Transport Project\TransLedger\obj\Release\net8.0\TransLedger.pdb
 E:\JAVASTS\Transport Project\TransLedger\obj\Release\net8.0\TransLedger.genruntimeconfig.cache
 E:\JAVASTS\Transport Project\TransLedger\obj\Release\net8.0\ref\TransLedger.dll
+E:\JAVASTS\Transport Project\TransLedger\obj\Release\net8.0\TransLedger.sourcelink.json

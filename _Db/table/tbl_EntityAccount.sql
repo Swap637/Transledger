@@ -34,7 +34,7 @@ begin
 		Balance money
 	)
 end
-
+GO
 if not exists(
 	select null from tbl_EntityAccount
 	where EntityAccountType = 'ACCOUNT'
@@ -44,15 +44,25 @@ begin
 	insert into tbl_EntityAccount(EntityAccountType, Name, AccountType, OpeningBalance, OpeningBalanceType, Balance)
 	values('ACCOUNT', 'Cash', 'CASH-IN-HAND', null, null, 0)
 end
-
-if not exists(
+GO
+IF NOT EXISTS(
 	select null from tbl_EntityAccount
 	where EntityAccountType = 'ACCOUNT'
-	and AccountType =  'BANK-ACCOUNT'
+	AND AccountType =  'BANK-ACCOUNT'
 )
-begin
+BEGIN
 	insert into tbl_EntityAccount(EntityAccountType, Name, AccountType, OpeningBalance, OpeningBalanceType, Balance)
 	values('ACCOUNT', 'Bank Account', 'BANK-ACCOUNT', null, null, 0)
-end
-
+END
+GO
+IF NOT EXISTS (
+    SELECT 1 
+    FROM sys.columns 
+    WHERE Name = N'AccountNumber'
+      AND Object_ID = Object_ID(N'tbl_EntityAccount')
+)
+BEGIN
+    ALTER TABLE tbl_EntityAccount
+    ADD AccountNumber VARCHAR(20);
+END
 

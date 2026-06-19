@@ -38,11 +38,16 @@
         <form action="/account/add" method="post">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Account Name</label>
-                    <input class="form-control" placeholder="Enter Account Name" asp-for="Name" />
+                    <label class="form-label">Account Name</label><span class="text-danger">*</span>
+                    <input class="form-control" placeholder="Enter Account Name" asp-for="Name" required/>
                 </div>
 
                 <div class="col-md-6 mb-3">
+                    <label class="form-label">Account Number</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="20" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter Account Number" asp-for="AccountNumber" required />
+                </div>
+
+               @*  <div class="col-md-6 mb-3">
                     <label class="form-label">Account Type</label>
                     <select class="form-control" asp-for="AccountType">
                         <option value="">Select Account Type</option>
@@ -52,18 +57,18 @@
                         <option value="EXPENSE">Expense</option>
                         <option value="EQUITY">Equity</option>
                     </select>
-                </div>
+                </div> *@
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Opening Balance</label>
-                    <input class="form-control" placeholder="0.00" asp-for="OpeningBalance" />
+                    <label class="form-label">Opening Balance</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="9" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="0.00" asp-for="OpeningBalance" required />
                 </div>
 
                 <div class="col-6 mb-3">
                     <label>Op. Bal. Type</label>
                     <div class="d-flex gap-4 mt-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="paymentTypeCredit" asp-for="OpeningBalanceType" value="true">
+                            <input class="form-check-input" type="radio" id="paymentTypeCredit" asp-for="OpeningBalanceType" value="true" checked="true">
                             <label class="form-check-label" for="paymentTypeCredit">
                                 <span class="text-success"><i class="bi bi-currency-rupee"></i></span> Credit
                             </label>
@@ -95,13 +100,13 @@
                 <tr>
                     <th width="60"></th>
                     <th>Account Name</th>
-                    <th>Type</th>
+                    <th>Account Number</th>
                     <th>Opening Balance</th>
                     <th width="140">Action</th>
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody id="uxAccounListtbody">
                 @if (dt != null && dt.Rows.Count > 0)
                 {
                     int i = 1;
@@ -113,20 +118,19 @@
                             opBal = Convert.ToDecimal(row["OpeningBalance"]).ToString("0.00");
                         }
 
-                        <tr>
+                        <tr data-id="@row["EntityAccountId"]">
                             <td>@i</td>
                             <td>@row["Name"]</td>
-                            <td>@row["AccountType"]</td>
+                            <td>@row["AccountNumber"]</td>
                             <td>@opBal @row["OpeningBalanceType"]</td>
                             <td width="140">
                                 <div class="d-flex gap-3">
-                                    <a class="text-muted fs-6" href="#">
+                                    <a class="text-muted fs-6" href="#" onclick="DeleteRow(this,@row["EntityAccountId"])">
                                         <i class="bi bi-trash3"></i>
                                     </a>
-
-                                    <a class="text-muted fs-6" href="#">
+                                   @*  <a class="text-muted fs-6" href="#" onclick="">
                                         <i class="bi bi-pencil-square"></i>
-                                    </a>
+                                    </a> *@
                                 </div>
                             </td>
                         </tr>
@@ -152,6 +156,68 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
+        function DeleteRow(selectElement,rowid){
+            $.ajax({
+                url:'/account/DeleteAccounts',
+                type : "POST",
+                data: { rowid: rowid},
+                success:function(response){
+                    if(response.success){
+                        genereatetbody(response.data)
+                    }
+                    else
+                    {
+                        console.log(response.message)
+                        console.log(response)
+                    }
+                },
+                error:function(xhr, status, error){
+                      alert("error : - " + error);
+                }
+            })
+        }
+
+        function genereatetbody(data){
+            console.log("DATA:", data);
+            $("#uxAccounListtbody").empty();
+
+            if (!data || data.length === 0) {
+                $("#uxAccounListtbody").html(`
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">
+                            No data found
+                        </td>
+                    </tr>
+                `);
+                return;
+            }
+
+            let html = "";
+            let i = 1;
+
+            $.each(data, function (index, item) {
+                console.log("ITEM:", item);
+                html += `
+                    <tr class="trip-row" data-id="${item.entityaccountid ?? ""}">
+                        <td>${i ?? ""}</td>
+                        <td>${item.name ?? ""}</td>
+                        <td>${item.accountNumber ?? ""}</td>
+                        <td>${item.openingBalanceType ?? ""}</td>
+                         <td width="140">
+                                <div class="d-flex gap-3">
+                                    <a class="text-muted fs-6" href="#" onclick="DeleteRow(this,${item.entityaccountid ?? ""})">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </div>
+                            </td>
+                    </tr>`;
+                i++;
+            });
+            console.log(html)
+            $('#uxAccounListtbody').html(html);
+        }
+        
+
         $("#btnNewAccount").on("click", () => {
             $("form input[type='text']").val("");
             $("form input[type='number']").val("");

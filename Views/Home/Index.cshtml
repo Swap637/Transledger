@@ -1,4 +1,8 @@
-﻿<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
+﻿@{
+    System.Data.DataTable TripList = ViewBag.TripEntryDetails as System.Data.DataTable ?? new System.Data.DataTable();
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
     <div>
         <h2>
             <strong>Dashboard</strong>
@@ -15,45 +19,243 @@
     </div>
 </div>
 
-<div class="row">
+<!-- Metrics Cards Block -->
+<div class="row mb-4">
     <div class="col-md-6 col-lg-3 mb-3">
-        <div class="card border p-4">
+        <div class="card border p-4 shadow-sm h-100">
             <div class="d-flex justify-content-between">
-                <p>Total Receivables</p>
-                <p class="text-success"><i class="bi bi-currency-rupee"></i></p>
+                <p class="mb-0 text-muted">Total Receivables</p>
+                <span class="text-success"><i class="bi bi-currency-rupee"></i></span>
             </div>
-            <h4><b>₹45,231.89</b></h4>
+            <h4 class="my-2"><b>₹45,231.89</b></h4>
             <small class="text-muted">+20.1% from last month</small>
         </div>
     </div>
     <div class="col-md-6 col-lg-3 mb-3">
-        <div class="card border p-4">
+        <div class="card border p-4 shadow-sm h-100">
             <div class="d-flex justify-content-between">
-                <p>Total Payables</p>
-                <p class="text-danger"><i class="bi bi-credit-card-2-back"></i></p>
+                <p class="mb-0 text-muted">Total Payables</p>
+                <span class="text-danger"><i class="bi bi-credit-card-2-back"></i></span>
             </div>
-            <h4><b>₹12,234.59</b></h4>
+            <h4 class="my-2"><b>₹12,234.59</b></h4>
             <small class="text-muted">+4.3% from last month</small>
         </div>
     </div>
     <div class="col-md-6 col-lg-3 mb-3">
-        <div class="card border p-4">
+        <div class="card border p-4 shadow-sm h-100">
             <div class="d-flex justify-content-between">
-                <p>Active Vehicles</p>
-                <p><i class="bi bi-truck"></i></p>
+                <p class="mb-0 text-muted">Active Vehicles</p>
+                <span><i class="bi bi-truck"></i></span>
             </div>
-            <h4><b>18</b></h4>
+            <h4 class="my-2"><b>18</b></h4>
             <small class="text-muted">+2 from last month</small>
         </div>
     </div>
     <div class="col-md-6 col-lg-3 mb-3">
-        <div class="card border p-4">
+        <div class="card border p-4 shadow-sm h-100">
             <div class="d-flex justify-content-between">
-                <p>Net Balance</p>
-                <p><i class="bi bi-bar-chart-line"></i></p>
+                <p class="mb-0 text-muted">Net Balance</p>
+                <span><i class="bi bi-bar-chart-line"></i></span>
             </div>
-            <h4><b>₹32,997.30</b></h4>
+            <h4 class="my-2"><b>₹32,997.30</b></h4>
             <small class="text-muted">+10.1% from last month</small>
         </div>
     </div>
 </div>
+
+<!-- Data Grid Container Card -->
+<div class="card shadow-sm border-0 mb-5">
+    <div class="row p-3 align-items-center bg-light border-bottom m-0 rounded-top">
+        <div class="col-md-6">
+            <h5 class="mb-0"><strong>Recent Transactions</strong></h5>
+        </div>
+        <div class="col-md-4 ms-auto">
+            <div class="input-group input-group-sm">
+                <button class="btn btn-outline-secondary bg-white border-end-0 text-muted" type="button" id="uxsearch">
+                    🔍
+                </button>
+                <input type="text" id="uxTripSearch" class="form-control border-start-0" placeholder="Search Trip Number..." autocomplete="off" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrollable Responsive Container -->
+    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-hover mb-0" id="uxTripTable">
+            <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                <tr>
+                    <th>Trip Number</th>
+                    <th>Vehicle</th>
+                    <th>Driver</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="tripTableBody">
+                @foreach (System.Data.DataRow row in TripList.Rows)
+                {
+                    <tr class="trip-row" data-id="@row["TripId"]">
+                        <td>@row["TripNumber"]</td>
+                        <td>@row["VehicleNumber"]</td>
+                        <td class="table-text-wrap">@row["Name"]</td>
+                        <td class="table-text-wrap">@row["LoadingPoint"]</td>
+                        <td class="table-text-wrap">@row["UnloadingPoint"]</td>
+                        <td>@(row["TripDate"] != DBNull.Value ? Convert.ToDateTime(row["TripDate"]).ToString("dd-MM-yyyy") : "")</td>
+                        <td>
+                            <select class="form-select form-select-sm @(row["TRIPSTATUS"]?.ToString() == "1" ? "status-completed" : row["TRIPSTATUS"]?.ToString() == "2" ? "status-cancelled" : "status-pending")" onchange="UpdateStatus(this,'@row["TripId"]')">
+                                <option value="1" selected="@(row["TRIPSTATUS"]?.ToString() == "1" ? "selected" : null)">COMPLETED</option>
+                                <option value="2" selected="@(row["TRIPSTATUS"]?.ToString() == "2" ? "selected" : null)">CANCELLED</option>
+                                <option value="0" selected="@(row["TRIPSTATUS"]?.ToString() == "0" ? "selected" : null)">PENDING</option>
+                            </select>
+                        </td>
+                    </tr>
+                }
+                @if (TripList.Rows.Count == 0)
+                {
+                    <tr id="uxNoDataRow">
+                        <td colspan="7" class="text-center text-muted p-4">No trip entries available.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Footer Navigation Panel -->
+    @if (TripList.Rows.Count > 0)
+    {
+        <div class="d-flex justify-content-between align-items-center p-3 border-top bg-light rounded-bottom">
+            <div class="text-muted small" id="uxPaginationInfo">
+                Showing entries
+            </div>
+            <nav aria-label="Trip table pagination navigation">
+                <ul class="pagination pagination-sm mb-0" id="uxPaginationControls">
+                    <!-- Javascript automatically populates page nodes here -->
+                </ul>
+            </nav>
+        </div>
+}
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            $('#uxsearch').click(function () {
+                var value = $('#uxTripSearch').val().toLowerCase();
+
+                $.ajax({
+                    url: '/Home/SearchTrip',
+                    type:'POST',
+                    data: { tripNo: value },
+                    success: function (response)
+                    {
+                       if (response.success) {
+                        if (response.data) {
+                           BuildTheSearchTree(response.data);
+                        } 
+                        else {
+                            $("#tripTableBody").html('<tr><td colspan="7" class="text-center text-muted p-4">No trip entries available.</td></tr>');
+                        }
+                    }
+                    else
+                    {
+                        console.log(response);
+                        alert(response.message);
+                    }
+                    },
+                    error:function(xhr, status, error){
+                        alert("error : - " + error);
+                    }
+                });
+            });
+
+           function BuildTheSearchTree(data) {
+                console.log("DATA:", data);
+                $("#tripTableBody").empty();
+                if (!data || data.length === 0) {
+                    $("#tripTableBody").html(`
+                        <tr>
+                            <td colspan="7" class="text-center text-danger">
+                                No data found
+                            </td>
+                        </tr>
+                    `);
+                    return;
+                }
+
+                let html = "";
+                $.each(data, function (index, item) {
+                    console.log("ITEM:", item);
+                    html += `
+                        <tr class="trip-row" data-id="${item.tripId ?? ""}">
+                            <td>${item.tripNumber ?? ""}</td>
+                            <td>${item.vehicleNo ?? ""}</td>
+                            <td>${item.name ?? ""}</td>
+                            <td>${item.loadingPoint ?? ""}</td>
+                            <td>${item.unloadingPoint ?? ""}</td>
+                            <td>${item.tripDate ?? ""}</td>
+                            <td>${getStatusBadge(item.tripstatus)}</td>
+                        </tr>`;
+                });
+                console.log(html)
+                $("#tripTableBody").html(html);
+           }
+
+            function getStatusBadge(status){
+                status = (status || "").toUpperCase();
+
+                if (status === 1) {
+                    return `<span class="badge bg-success">COMPLETED</span>`;
+                }
+                else if (status === 2) {
+                    return `<span class="badge bg-danger">CANCELLED</span>`;
+                }
+                else {
+                    return `<span class="badge bg-warning text-dark">PENDING</span>`;
+                }
+            }
+        });
+
+        function UpdateStatus(selectElement,rowid) {
+             if(selectElement != "" || selectElement != 0){
+                 if(rowid != "" || rowid != 0){
+                     $(selectElement).removeClass('status-completed status-cancelled status-pending');
+                     
+                     if ($(selectElement).val() === "1") {
+                         $(selectElement).addClass('status-completed');
+                     }
+                     else if ($(selectElement).val() === "2") {
+                         $(selectElement).addClass('status-cancelled');
+                     }
+                     else if ($(selectElement).val() === "0") {
+                         $(selectElement).addClass('status-pending');
+                     }
+                        
+                     $.ajax({
+                         url: '/Home/UpdateTripStatus',
+                         type : "POST",
+                         data: { rowid: rowid,TripStatus:$(selectElement).val()},
+                         success:function(response){
+                            if(response.success){
+
+                            }
+                            else
+                            {
+                                console.log(response.message)
+                                console.log(response)
+                                //alert(response.message);
+                            }
+                         },
+                         error:function(xhr, status, error){
+                              alert("error : - " + error);
+                         }
+                     })
+                 }
+             }
+        }
+    </script>
+}

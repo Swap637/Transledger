@@ -2,6 +2,8 @@
 @{
     string alertType = TempData["AlertType"]?.ToString() ?? "";
     string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+    var tripNumbers = @Html.Raw(Json.Serialize(ViewBag.TripNumber));
+    var AccountNumbers = @Html.Raw(Json.Serialize(ViewBag.AccountNumbers));
 }
 
 <div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
@@ -34,19 +36,33 @@
                     <div class="form-check">
                         <input class="form-check-input" type="radio" asp-for="PaymentType" value="RECEIPT" id="receipt" checked>
                         <label class="form-check-label" for="receipt">
-                            <span class="text-success"><i class="bi bi-currency-rupee"></i></span> Receipt
+                            <span class="text-success"><i class="bi bi-currency-rupee"></i></span> Receipt (Cr)
                         </label>
                     </div>
 
                     <div class="form-check">
                         <input class="form-check-input" type="radio" asp-for="PaymentType" value="PAYMENT" id="payment">
                         <label class="form-check-label" for="payment">
-                            <span class="text-danger"><i class="bi bi-credit-card-2-back"></i></span> Payment
+                            <span class="text-danger"><i class="bi bi-credit-card-2-back"></i></span> Payment (Dr)
                         </label>
                     </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
+                    <label class="form-label">Trip Number</label><span class="text-danger">*</span>
+                    <select class="form-control" id="uxTripNumber" asp-for="tripNumber" required>
+                        <option value="">-- Select Trip Number --</option>
+                        @if (ViewBag.TripNumber != null)
+                        {
+                            @foreach (var item in (List<TripDetails>)ViewBag.TripNumber)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                @* <div class="col-md-6 mb-3">
                     <label class="form-label">Entity Type</label>
                     <select class="form-control" id="entityType" required>
                         <option value="">Select Entity Type</option>
@@ -56,27 +72,22 @@
                         <option value="VEHICLE">Vehicle</option>
                         <option value="DRIVER">Driver</option>
                     </select>
-                </div>
+                </div> *@
 
-                <div class="col-md-6 mb-3">
+             @*    <div class="col-md-6 mb-3">
                     <label class="form-label">Entity</label>
                     <select class="form-control" id="entity" asp-for="EntityAccountId" disabled required>
                         <option value="">Select Entity</option>
                     </select>
-                </div>
-
+                </div> *@
+                <input type="hidden" asp-for="HiddenTripid" id="TripId"/>
+                
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Amount (₹)</label>
-                    <input class="form-control" placeholder="0.00" asp-for="Amount" required />
+                    <label class="form-label">Credited From</label><span class="text-danger">*</span>
+                    <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" autocomplete="new-password" id="uxcreditedfrom" maxlength="50" disabled />
                 </div>
-
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Date</label>
-                    <input class="form-control" type="date" asp-for="Date" required />
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Mode of Payment</label>
+                    <label class="form-label">Mode of Payment</label><span class="text-danger">*</span>
                     <select class="form-control" id="paymentMode" asp-for="ModeOfPayment" required>
                         <option value="">Select Payment Mode</option>
                         <option value="CASH">Cash</option>
@@ -88,13 +99,41 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Reference Number</label>
-                    <input class="form-control" placeholder="UPI ID, Cheque No, etc" id="refNo" asp-for="ReferenceNumber" disabled />
+                    <label class="form-label">Credited To</label><span class="text-danger">*</span>
+                    <select class="form-control" asp-for="Credited_Accountid" id="uxTripNumber" required>
+                        <option value="">-- Select Credited Account --</option>
+                        @if (ViewBag.AccountNumbers != null)
+                        {
+                            @foreach (var item in (List<TripDetails>)ViewBag.AccountNumbers)
+                            {
+                                <option value="@item.Value">@item.Text - @item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Amount (₹)</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="9" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="0.00" asp-for="Amount" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Date</label><span class="text-danger">*</span>
+                    <input class="form-control" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" asp-for="Date" required />
+                </div>
+
+                
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">UTR/TRANSACTION/REFERENCE Number</label><span class="text-danger">*</span>
+                    <input class="form-control" maxlength="20" placeholder="UTR/TRANSACTION/REFERENCE Number" id="refNo" asp-for="ReferenceNumber" required />
+                </div>
+                <div class="col-md-6 mb-3 d-none" id="uxOtherPaymentMethod">
+                    <label class="form-label">Other Payment Method</label><span class="text-danger">*</span>
+                    <input class="form-control" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" maxlength="20" placeholder="Other Payment Method" id="refNo" asp-for="OtherPaymentMethod" required />
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label class="form-label">Remarks</label>
-                    <textarea class="form-control" rows="3" placeholder="Enter Remarks" asp-for="Remarks" required></textarea>
+                    <label class="form-label">Remarks</label><span class="text-danger">*</span>
+                    <textarea class="form-control" maxlength="200" rows="3" placeholder="Enter Remarks" asp-for="Remarks" required></textarea>
                 </div>
             </div>
 
@@ -105,11 +144,27 @@
         </div>
     </div>
 </form>
-
+<script>
+    var tripNumbers = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.TripNumber));
+</script>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
     <script>
+        $('#uxTripNumber').on('change',function(){
+            var selectedId = $(this).val();
+            var selectedItem = tripNumbers.find(x => x.Value == selectedId);
+            $('#TripId').val(selectedId)
+            if (selectedItem) {
+               $('#Amount').val(selectedItem.Amount);
+               $('#uxcreditedfrom').val(selectedItem.Name);
+            } 
+            else {
+                $('#Amount').val('');
+                $('#uxcreditedfrom').val('');
+            }
+        });
+
         $('#entityType').on('change', function () {
             let entityType = $('#entityType').val();
             if (entityType) {
@@ -147,6 +202,12 @@
                 $('#paymentMode').val() == 'OTHER') {
 
                 $('#refNo').prop('disabled', false).prop('required', true).val('');
+
+                if ($('#paymentMode').val() == 'OTHER') {
+                    $('#uxOtherPaymentMethod').removeClass('d-none');
+                } else {
+                    $('#uxOtherPaymentMethod').addClass('d-none');
+                }
             }
             else {
                 $('#refNo').prop('disabled', true).prop('required', false).val('');

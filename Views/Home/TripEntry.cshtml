@@ -35,10 +35,10 @@
     </div>
 </div>
 
-@if (!string.IsNullOrWhiteSpace(alertMsg))
-{
-    <div class="alert alert-@alertType">@alertMsg</div>
-}
+
+<div class="alert alert-success d-none" id="uxmessagesuccesdiv"><label id="uxmsgSuccessBox"></label></div>
+<div class="alert alert-danger d-none" id="uxmsderrordiv"><label id="uxmsgDangerBox"></label></div>
+
 
 <form method="post">
     <div class="card shadow-sm border-0">
@@ -54,7 +54,7 @@
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">LR/Bilty Number</label>
-                    <input type="text" class="form-control" max="20" asp-for="LRBiltyNumber" maxlength="100" required placeholder="Enter LR/Bilty Number" onpaste="return false;" />
+                    <input type="text" class="form-control" autocomplete="new-password" max="20" asp-for="LRBiltyNumber" maxlength="100" required placeholder="Enter LR/Bilty Number" onpaste="return false;" />
                 </div>
 
                 @*<div class="col-md-6 mb-3">
@@ -75,7 +75,7 @@
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Vehical Weights</label>
-                    <input type="text" class="form-control" id="VehicalWeights" placeholder="Enter LR/Bilty Number" readonly />
+                    <input type="text" class="form-control" autocomplete="new-password" id="VehicalWeights" placeholder="Enter Vehical Weights" readonly />
                 </div>
             </div>
 
@@ -83,12 +83,12 @@
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Vehicle Owner Name.</label>
-                    <input type="text" class="form-control" id="VehicleOwner" max="20" maxlength="100" placeholder="Vehicle Owner Name." readonly />
+                    <input type="text" class="form-control" autocomplete="new-password" id="VehicleOwner" max="20" maxlength="100" placeholder="Vehicle Owner Name." readonly />
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Vehicle Owner Mobile No.</label>
-                    <input type="text" class="form-control" id="VehicleMobileName" max="20" maxlength="100" placeholder="Vehicle Mobile No." readonly/>
+                    <input type="text" class="form-control" autocomplete="new-password" id="VehicleMobileName" max="20" maxlength="100" placeholder="Vehicle Mobile No." readonly />
                 </div>
 
                 <div class="col-md-4 mb-3">
@@ -101,7 +101,7 @@
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Hiring Amount For the owner (₹)</label>
-                    <input type="text" class="form-control" asp-for="HiringAmountForowner" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" pattern="^\d{1,3}(,\d{3})*(\.\d{2})?$" required />
+                    <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountForowner" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
                 </div>
 
                 <div class="col-md-4 mb-3">
@@ -117,7 +117,7 @@
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Hiring Amount For Broker (₹)</label>
-                    <input type="text" class="form-control" asp-for="HiringAmountForBroker" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" pattern="^\d{1,3}(,\d{3})*(\.\d{2})?$" required />
+                    <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountForBroker" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
                 </div>
             </div>
 
@@ -139,7 +139,7 @@
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Hiring Amount from Party (₹)</label>
-                    <input type="text" class="form-control" asp-for="HiringAmountfromParty" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" pattern="^\d{1,3}(,\d{3})*(\.\d{2})?$" required />
+                    <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountfromParty" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
                 </div>
 
                <div class="col-md-4 mb-3">
@@ -164,17 +164,17 @@
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Loading Point</label>
-                    <input type="text" class="form-control" asp-for="LoadingPoint" maxlength="100" required placeholder="Enter Loading Point" onpaste="return false;"/>
+                    <input type="text" class="form-control" autocomplete="new-password" asp-for="LoadingPoint" maxlength="100" required placeholder="Enter Loading Point" onpaste="return false;" />
                 </div>
 
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Unloading Point</label>
-                    <input type="text" class="form-control" maxlength="100" asp-for="UnloadingPoint" onpaste="return false;" required placeholder="Enter Unloading Point" />
+                    <input type="text" class="form-control" autocomplete="new-password" maxlength="100" asp-for="UnloadingPoint" onpaste="return false;" required placeholder="Enter Unloading Point" />
                 </div>
 
                 <div class="col-md-12 mb-3">
                     <label class="form-label">Remarks</label>
-                    <textarea id="uxremarks" class="form-control" rows="3" asp-for="Remarks" onpaste="return false;" maxlength="250" required placeholder="Enter Remarks"></textarea>
+                    <textarea id="uxremarks" class="form-control" autocomplete="new-password" rows="3" asp-for="Remarks" onpaste="return false;" maxlength="250" required placeholder="Enter Remarks"></textarea>
                 </div>
             </div>
 
@@ -205,7 +205,8 @@
 
         $('#uxVehical').change(function(e) {
             var selectedvehicalid  = parseInt($(this).val())
-            $.ajax({
+            if (selectedvehicalid && selectedvehicalid > 0) {
+                $.ajax({
                 url:'/Home/getVehicaleDetails',
                 type:'POST',
                 data:{
@@ -229,10 +230,41 @@
                     alert("error : - " + error);
                 }
             })
+            }
         })
 
         $('form').submit(function (e) {
            e.preventDefault();
+           let isSelectValid = true;
+           const criticalDropdowns = ['#uxVehical', '#uxBrocker', '#uxBookingParty', '#uxDriver'];
+           criticalDropdowns.forEach(function (id) {
+                const selectElement = $(id);
+                if (selectElement.val() === "") {
+                    isSelectValid = false;
+                    selectElement.addClass('is-invalid').removeClass('is-valid');
+                } else {
+                    selectElement.addClass('is-valid').removeClass('is-invalid');
+                }
+           });
+
+           if (this.checkValidity() === false || !isSelectValid) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                // Force the browser to trigger validation UI styles
+                $(this).addClass('was-validated');
+
+                // Alert the user if the issue is specifically selection-based
+                if (!isSelectValid) {
+                    $('#uxmessagesuccesdiv').addClass('d-none');
+                    $('#uxmsderrordiv').removeClass('d-none');
+                    $('#uxmsgDangerBox').text('Please select valid options for all required dropdown lists.');
+                }
+                return false;
+           }
+           $(this).removeClass('was-validated');
+           $('#uxmessagesuccesdiv').addClass('d-none');
+           $('#uxmsderrordiv').addClass('d-none');
            $.ajax({
                url:'/Home/TripEntry',
                type:'POST',
@@ -240,20 +272,40 @@
                success:function(response){
                    if (response.success) {
                            var today = new Date().toISOString().split('T')[0];
+                           $('#LRBiltyNumber').val('');
+                           $('#VehicalWeights').val('');
+                           $('#VehicleOwner').val('');
+                           $('#VehicleMobileName').val('');
+                           $('#HiringAmountForowner').val('');
+                           $('#HiringAmountForBroker').val('');
+                           $('#HiringAmountfromParty').val('');
+                           $('#LoadingPoint').val('');
+                           $('#UnloadingPoint').val('');
+                           $('#uxremarks').val('');
+
                            $('input[type="date"]').val(today);
+                           $('input[type="text"]').val();
+
                            $('#uxBrocker').val('');
                            $('#uxVehical').val('');
+                           $('#uxDriver').val('');
+                          
                            $('#uxBookingParty').val('');
-                           $('#uxremarks').val('');
+
+                           $('#uxVehical').change();
+                           $('#uxmessagesuccesdiv').removeClass('d-none');
+                           $('#uxmsgSuccessBox').text(response.message);
                    } 
                    else {
                         alert(response.message);
+                        $('#uxmsderrordiv').removeClass('d-none');
+                        $('#uxmsgDangerBox').text(response.message);
                    }
                },
                error: function (xhr, status, error) {
                 console.log(error);
                 alert('Something went wrong');
-               }
+               },
            })
         });
     </script>

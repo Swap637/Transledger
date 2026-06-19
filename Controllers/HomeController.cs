@@ -1,10 +1,15 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json.Linq;
 using System.Data;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using TransLedger.Models;
 using TransLedger.Services;
+using static System.Net.Mime.MediaTypeNames;
+
 
 
 namespace TransLedger.Controllers
@@ -24,7 +29,108 @@ namespace TransLedger.Controllers
         [HttpGet("index")]
         public IActionResult Index()
         {
+            string query = "";
+            try
+            {
+                query = @" EXEC PR_TR_TripEntry @p_Mode = 2";
+
+                DataSet ds = _dataAccess.Execute(query);
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    ViewBag.TripEntryDetails = ds.Tables[0];
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertType"] = "danger";
+                TempData["AlertMsg"] = ex.Message;
+            }
             return View();
+        }
+
+        [HttpPost("Home/SearchTrip")]
+        public IActionResult SearchTrip(String tripNo)
+        {
+            try
+            {
+                Dictionary<string, object> parameters = new Dictionary<string, object>()
+                {
+                    { "@p_Mode", 2 },
+                    { "@p_TripNumber", tripNo }
+                };
+
+                DataSet ds=  _dataAccess.ExecuteSP("PR_TR_TripEntry", parameters);
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count>0)
+                {
+                    DataTable dt = ds.Tables[0];
+                    var tripData = dt.AsEnumerable().Select(row => new
+                    {
+                        TripId = row["TripId"]?.ToString(),
+                        TripNumber = row["TripNumber"]?.ToString(),
+                        VehicleNo = row["VehicleNumber"]?.ToString(),
+                        Name = row["Name"]?.ToString(),
+                        LoadingPoint = row["LoadingPoint"]?.ToString(),
+                        UnloadingPoint = row["UnloadingPoint"]?.ToString(),
+                        TripDate = row["TripDate"]?.ToString(),
+                        TRIPSTATUS = row["TRIPSTATUS"]?.ToString()
+                    });
+
+                    return Json(new
+                    {
+                        data = tripData,
+                        success = true,
+                        message = ""
+                    });
+                }
+
+                return Json(new
+                {
+                    data = "",
+                    success = true,
+                    message = ""
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    data = "",
+                    success = false,
+                    message = "Database Error: " + ex.Message
+                });
+            }
+        }
+
+        [HttpPost("Home/UpdateTripStatus")]
+        public IActionResult UpdateTripStatus(String rowid, string TripStatus)
+        {
+            try
+            {
+                Dictionary<string, object> parameters = new Dictionary<string, object>()
+                {
+                    { "@p_Mode", 3 },
+                    { "@p_TripEntryid", rowid },
+                    { "@p_TripStatus", TripStatus }
+                };
+
+                 _dataAccess.ExecuteSP("PR_TR_TripEntry", parameters);
+                
+                return Json(new
+                {
+                    success = true,
+                    message = ""
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Database Error: " + ex.Message
+                });
+            }
         }
 
         [HttpGet("registration")]
@@ -64,7 +170,7 @@ namespace TransLedger.Controllers
                 TempData["AlertMsg"] = ex.Message;
             }
         }
-        [HttpPost("TripEntry")]
+        [HttpPost("Home/TripEntry")]
         public IActionResult TripEntry(TripEntryModel model)
         {
             try
@@ -74,14 +180,17 @@ namespace TransLedger.Controllers
                     { "@p_Mode", 0 },
                     { "@p_VehicleNumber", model.VehicleNumber }, // Changed from PaymentType to your vehicle ID
                     { "@p_EntityAccountId", model.EntityAccountId },
-                    { "@p_Amount", model.Amount },
+                    { "@p_AmtforOwner", model.HiringAmountForowner },
                     { "@p_Date", model.Date },
                     { "@p_Remarks", model.Remarks },
                     { "@p_LoadingPoint", model.LoadingPoint },
                     { "@p_UnloadingPoint", model.UnloadingPoint },
-                    { "@p_LRNumber", model.LRNumber },
+                    { "@p_LRNumber", model.LRBiltyNumber },
                     { "@p_BookingPartyId", model.BookingPartyId },
-                    { "@p_BrokerId", model.BrokerId }
+                    { "@p_AmtForBkingPrty", model.HiringAmountfromParty },
+                    { "@p_BrokerId", model.BrokerId },
+                    { "@p_AmtForBroker", model.HiringAmountForBroker },
+                    { "@p_Driverid" , model.Driver}
                 };
 
                 _dataAccess.ExecuteSP("PR_TR_TripEntry", parameters);
@@ -110,31 +219,41 @@ namespace TransLedger.Controllers
         {
             try
             {
-                Dictionary<string, object> parameters = new Dictionary<string, object>()
+                if (selectedvehicalid != 0)
+                {
+                    Dictionary<string, object> parameters = new Dictionary<string, object>()
                 {
                     { "@p_Mode", 1 },
                     { "@p_VehicleNumber", selectedvehicalid },
                 };
 
-               DataSet ds =  _dataAccess.ExecuteSP("PR_TR_TripEntry", parameters);
+                    DataSet ds = _dataAccess.ExecuteSP("PR_TR_TripEntry", parameters);
 
-                if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                    if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "No data found"
+                        });
+                    }
+
+                    return Json(new
+                    {
+                        VehicalOwnerName = ds.Tables[0].Rows[0]["OwnerName"].ToString(),
+                        VehicalWeights = ds.Tables[0].Rows[0]["CapacityInTons"].ToString(),
+                        VehicleMobileName = ds.Tables[0].Rows[0]["ContactNo"].ToString(),
+                        success = true,
+                        message = "Success"
+                    });
+                }
+                else
                 {
                     return Json(new
                     {
-                        success = false,
-                        message = "No data found"
+                        success = false
                     });
                 }
-
-                return Json(new
-                { 
-                    VehicalOwnerName = ds.Tables[0].Rows[0]["OwnerName"].ToString(),
-                    VehicalWeights = ds.Tables[0].Rows[0]["CapacityInTons"].ToString(),
-                    VehicleMobileName = ds.Tables[0].Rows[0]["ContactNo"].ToString(),
-                    success = true,
-                    message = "Success"
-                });
             }
             catch (Exception ex)
             {
@@ -149,6 +268,52 @@ namespace TransLedger.Controllers
         [HttpGet("paymententry")]
         public IActionResult PaymentEntry()
         {
+            try
+            {
+                Dictionary<string, Object> parameters = new Dictionary<string, object>()
+                {
+                    { "@p_Action", "GET-TRIPNUMBER" },
+                };
+
+                List<TripDetails> tripnumbers = new List<TripDetails>();
+                List<TripDetails> AccountNumbers = new List<TripDetails>();
+                DataSet ds = _dataAccess.ExecuteSP("pr_PaymentEntry", parameters);
+
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow row in ds.Tables[0].Rows)
+                    {
+                        tripnumbers.Add(new TripDetails
+                        {
+                            Text = row["TripNumber"].ToString(),
+                            Value = row["TripId"].ToString(),
+                            Amount = row["Amount"].ToString(),
+                            Name = row["Name"].ToString()
+                        });
+                    }
+                }
+
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[1].Rows.Count > 0)
+                {
+                    foreach (DataRow row in ds.Tables[1].Rows)
+                    {
+                        AccountNumbers.Add(new TripDetails
+                        {
+                            Text = row["AccountNumber"].ToString(),
+                            Value = row["EntityAccountId"].ToString(),
+                            Name = row["Name"].ToString()
+                        });
+                    }
+                }
+
+                ViewBag.TripNumber = tripnumbers ?? new List<TripDetails>();
+                ViewBag.AccountNumbers = AccountNumbers ?? new List<TripDetails>();
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertType"] = "danger";
+                TempData["AlertMsg"] = ex.Message;
+            }
             return View();
         }
         
@@ -246,8 +411,16 @@ namespace TransLedger.Controllers
                     { "@p_Name", model.Name },
                     { "@p_AccountType", model.AccountType },
                     { "@p_OpeningBalance", model.OpeningBalance },
-                    { "@p_OpeningBalanceType", model.OpeningBalanceType }
+                    { "@p_OpeningBalanceType", model.OpeningBalanceType },
+                    { "@p_AccountNumber", model.AccountNumber },
+                    { "@ERROR" ,""}
                 };
+                string error = parameters["@ERROR"]?.ToString();
+
+                if (!string.IsNullOrWhiteSpace(error))
+                {
+                    throw new Exception(error);
+                }
 
                 _dataAccess.ExecuteSP("pr_EntityAccount", parameters);
 
@@ -260,10 +433,68 @@ namespace TransLedger.Controllers
             {
                 TempData["AlertType"] = "danger";
                 TempData["AlertMsg"] = ex.Message;
-                return View("Accounts");
+               
+                return Redirect("/accounts");
             }
         }
         
+        [HttpPost("account/DeleteAccounts")]
+        public IActionResult DeleteAccounts(int rowid)
+        {
+            try
+            {
+                Dictionary<string, Object> parameters = new Dictionary<string, object>()
+                {
+                    { "@p_Action", "DELETE" },
+                    { "@p_EntityAccountType", "ACCOUNT" },
+                    { "@p_EntityAccountId", rowid}
+                };
+
+               DataSet DS = _dataAccess.ExecuteSP("pr_EntityAccount", parameters);
+
+                if (DS != null && DS.Tables.Count > 0 && DS.Tables[0].Rows.Count > 0)
+                {
+                    foreach (DataRow row in DS.Tables[0].Rows)
+                    {
+                        DataTable dt = DS.Tables[0];
+                        var tripData = dt.AsEnumerable().Select(row => new
+                        {
+                            EntityAccountId = row["EntityAccountId"]?.ToString(),
+                            Name = row["Name"]?.ToString(),
+                            AccountNumber = row["AccountNumber"]?.ToString(),
+                            OpeningBalanceType = row["OpeningBalanceType"]?.ToString(),
+                        });
+
+                        return Json(new
+                        {
+                            data = tripData,
+                            success = true,
+                            message = ""
+                        });
+                    }
+                }
+           
+                return Json(new
+                {
+                    data = "",
+                    success = true,
+                    message = ""
+                });
+                
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertType"] = "danger";
+                TempData["AlertMsg"] = ex.Message;
+                return Json(new
+                {
+                    data = "",
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
         [HttpGet("company-list")]
         public IActionResult ListOfComapany()
         {

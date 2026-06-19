@@ -2,6 +2,7 @@ IF OBJECT_ID('b_TripEntry') IS  NULL
     BEGIN
         CREATE TABLE b_TripEntry (
 		TripId             INT IDENTITY(1,1) NOT NULL,
+		TripNumber         VARCHAR(100) NOT NULL,
 		LRBiltyNumber      VARCHAR(10) NOT NULL,
 		VehicleId          INT NOT NULL,
 		TripDate           DATE NOT NULL,

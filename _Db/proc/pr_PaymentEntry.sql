@@ -1,90 +1,103 @@
-if OBJECT_ID('pr_PaymentEntry') is not null
-begin
-	drop proc pr_PaymentEntry
-end
-go
-create proc pr_PaymentEntry(
-	@p_Action varchar(50),
-	@p_PaymentType varchar(50) = null,
-	@p_EntityAccountId int = null,
-	@p_Amount money = null,
-	@p_PaymentDate  datetime = null,
-	@p_ModeOfPayment varchar(25) = null,
-	@p_ReferenceNumber varchar(25) = null,
-	@p_Remarks varchar(500) = null
+IF OBJECT_ID('pr_PaymentEntry') IS NOT NULL
+BEGIN
+	DROP PROC pr_PaymentEntry
+END
+GO
+CREATE PROC pr_PaymentEntry(
+	@p_Action          VARCHAR(50)  = 'GET-LEDGER',
+	@P_TripEntryId     INT          = NULL,
+	@P_CreditedFrom    VARCHAR(50)  = NULL,
+	@P_CreditedTo      VARCHAR(50)  = NULL,
+	@P_OthrPymntMeth   VARCHAR(50)  = NULL,
+	@p_PaymentType     VARCHAR(50)  = NULL,
+	@p_EntityAccountId INT          = NULL,
+	@p_Amount          MONEY        = NULL,
+	@p_PaymentDate     DATETIME     = NULL,
+	@p_ModeOfPayment   VARCHAR(25)  = NULL,
+	@p_ReferenceNumber VARCHAR(25)  = NULL,
+	@p_Remarks         VARCHAR(500) = NULL
 )
-as
-begin
-	declare @RefId uniqueidentifier, @DrAccountId int, @CrAccountId  int
+AS
+BEGIN
+	DECLARE @RefId UNIQUEIDENTIFIER, @DrAccountId INT, @CrAccountId  INT
 
-	if @p_Action = 'MAKE-TRANSACTION'
-	begin
-		select @RefId = NEWID();	
+	IF @p_Action = 'MAKE-TRANSACTION'
+	BEGIN
+		SELECT @RefId = NEWID();	
 
-		begin try
-			begin tran
-				if @p_PaymentType = 'PAYMENT'
-				begin
-					select @DrAccountId = @p_EntityAccountId;
+		BEGIN TRY
+			BEGIN TRAN
+				IF @p_PaymentType = 'PAYMENT'
+				BEGIN
+					SELECT @DrAccountId = @p_EntityAccountId;
 
-					if @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
-					begin
-						select @CrAccountId = EntityAccountId from tbl_EntityAccount
-						where EntityAccountType = 'ACCOUNT'
-						and AccountType =  'BANK-ACCOUNT'
-					end
-					else
-					begin
-						select @CrAccountId = EntityAccountId from tbl_EntityAccount
-						where EntityAccountType = 'ACCOUNT'
-						and AccountType =  'CASH-IN-HAND'
-					end
-				end
-				else
-				begin
-					select @CrAccountId = @p_EntityAccountId;
+					IF @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
+					BEGIN
+						SELECT @CrAccountId = EntityAccountId FROM tbl_EntityAccount
+						WHERE EntityAccountType = 'ACCOUNT'
+						AND AccountType =  'BANK-ACCOUNT'
+					END
+					ELSE
+					BEGIN
+						SELECT @CrAccountId = EntityAccountId FROM tbl_EntityAccount
+						WHERE EntityAccountType = 'ACCOUNT'
+						AND AccountType =  'CASH-IN-HAND'
+					END
+				END
+				ELSE
+				BEGIN
+					SELECT @CrAccountId = @p_EntityAccountId;
 
-					if @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
-					begin
-						select @DrAccountId = EntityAccountId from tbl_EntityAccount
-						where EntityAccountType = 'ACCOUNT'
-						and AccountType =  'BANK-ACCOUNT'
-					end
-					else
-					begin
-						select @DrAccountId = EntityAccountId from tbl_EntityAccount
-						where EntityAccountType = 'ACCOUNT'
-						and AccountType =  'CASH-IN-HAND'
-					end
-				end
+					IF @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
+					BEGIN
+						SELECT @DrAccountId = EntityAccountId FROM tbl_EntityAccount
+						WHERE EntityAccountType = 'ACCOUNT'
+						AND AccountType =  'BANK-ACCOUNT'
+					END
+					ELSE
+					BEGIN
+						SELECT @DrAccountId = EntityAccountId FROM tbl_EntityAccount
+						WHERE EntityAccountType = 'ACCOUNT'
+						AND AccountType =  'CASH-IN-HAND'
+					END
+				END
 
-				insert into tbl_PaymentDetails(PaymentType, EntityAccountId, Amount, PaymentDate, ModeOfPayment, ReferenceNumber, Remarks, RefId)
-				values(@p_PaymentType, @p_EntityAccountId, @p_Amount, @p_PaymentDate, @p_ModeOfPayment, @p_ReferenceNumber, @p_Remarks, @RefId)
 
-				exec pr_Transactions
+				INSERT INTO tbl_PaymentDetails(TripEntryId,Amount,CreditedFrom,CreditedTo, PaymentDate, ModeOfPayment,OthrPymntMeth, UTRTranRefNumber, Remarks, RefId)
+				VALUES(@P_TripEntryId,  @p_Amount,@P_CreditedFrom,@P_CreditedTo, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId)
+
+				EXEC pr_Transactions
 					@p_DrEntityAccountId = @DrAccountId,
 					@p_CrEntityAccountId = @CrAccountId,
 					@p_TransactionAmount = @p_Amount,
 					@p_Remark = @p_Remarks,
 					@p_RefId = @RefId,
 					@p_TransactionDate = @p_PaymentDate
-			commit tran
-		end try
-		begin catch
-			if @@TRANCOUNT > 0
-				rollback tran;
+			COMMIT TRAN
+		END TRY
+		BEGIN CATCH
+			IF @@TRANCOUNT > 0
+				ROLLBACK TRAN;
 
-			throw;
-		end catch
-	end
+			THROW;
+		END CATCH
+	END
 
-	else if @p_Action = 'GET-LEDGER'
-	begin
-		select l.TransactionDate, isnull(ea.Name, ea.VehicleNumber) EntityAccount, l.Remark, pd.ReferenceNumber,
-		case l.TransactionType when 'DEBIT' then l.Amount else null end as Debit,
-		case l.TransactionType when 'CREDIT' then l.Amount else null end as Credit
-		from tbl_Ledger l with (nolock)
-		inner join tbl_PaymentDetails pd with (nolock) on pd.RefId = l.RefId
-		inner join tbl_EntityAccount ea with (nolock) on ea.EntityAccountId = l.EntityAccountId
-	end
-end
+	ELSE IF @p_Action = 'GET-LEDGER'
+	BEGIN
+		SELECT l.TransactionDate, ISNULL(ea.Name, ea.VehicleNumber) EntityAccount, l.Remark, pd.ReferenceNumber,
+		CASE l.TransactionType WHEN 'DEBIT' then l.Amount ELSE NULL END AS Debit,
+		CASE l.TransactionType WHEN 'CREDIT' then l.Amount ELSE NULL END AS Credit
+		FROM tbl_Ledger l WITH (NOLOCK)
+		INNER JOIN tbl_PaymentDetails pd WITH (NOLOCK) on pd.RefId = l.RefId
+		INNER JOIN tbl_EntityAccount ea WITH (NOLOCK) on ea.EntityAccountId = l.EntityAccountId
+	END
+
+	ELSE IF @p_Action ='GET-TRIPNUMBER'
+	BEGIN 
+	  SELECT TripId,TripNumber
+      FROM b_TripEntry 
+	  WHERE ISNULL(TRIPSTATUS,0)  = 0
+	END
+END
+GO
