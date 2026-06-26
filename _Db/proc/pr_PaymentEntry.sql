@@ -15,7 +15,8 @@ CREATE PROC pr_PaymentEntry(
 	@p_PaymentDate     DATETIME     = NULL,
 	@p_ModeOfPayment   VARCHAR(25)  = NULL,
 	@p_ReferenceNumber VARCHAR(25)  = NULL,
-	@p_Remarks         VARCHAR(500) = NULL
+	@p_Remarks         VARCHAR(500) = NULL,
+	@ERROR             VARCHAR(500) = NULL OUTPUT
 )
 AS
 BEGIN
@@ -24,11 +25,13 @@ BEGIN
 	IF @p_Action = 'MAKE-TRANSACTION'
 	BEGIN
 		SELECT @RefId = NEWID();	
-
+		
 		BEGIN TRY
 			BEGIN TRAN
+
 				IF @p_PaymentType = 'PAYMENT'
 				BEGIN
+				
 					SELECT @DrAccountId = @p_EntityAccountId;
 
 					IF @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
@@ -46,46 +49,61 @@ BEGIN
 				END
 				ELSE
 				BEGIN
+
 					SELECT @CrAccountId = @p_EntityAccountId;
 
 					IF @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
 					BEGIN
-						SELECT @DrAccountId = EntityAccountId FROM tbl_EntityAccount
+						SELECT @DrAccountId = EntityAccountId 
+						FROM tbl_EntityAccount WITH (NOLOCK)
 						WHERE EntityAccountType = 'ACCOUNT'
 						AND AccountType =  'BANK-ACCOUNT'
 					END
 					ELSE
 					BEGIN
-						SELECT @DrAccountId = EntityAccountId FROM tbl_EntityAccount
+						SELECT @DrAccountId = EntityAccountId FROM tbl_EntityAccount WITH (NOLOCK)
 						WHERE EntityAccountType = 'ACCOUNT'
 						AND AccountType =  'CASH-IN-HAND'
 					END
 				END
 
+				INSERT INTO tbl_PaymentDetails(TripEntryId,Amount,CreditedFrom,CreditedTo, PaymentDate, ModeOfPayment,OthrPymntMeth, UTRTranRefNumber, Remarks, RefId,CreatedOn)
+				VALUES(@P_TripEntryId,  @p_Amount,@P_CreditedFrom,@P_CreditedTo, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId,GETDATE())
+				
+				IF ISNULL(@DrAccountId,0) <> 0 AND ISNULL(@CrAccountId,0) <> 0 AND ISNULL(@p_Amount,0) > 0
+				BEGIN 
+					  EXEC pr_Transactions
+						@p_DrEntityAccountId = @DrAccountId,
+						@p_CrEntityAccountId = @CrAccountId,
+						@p_TransactionAmount = @p_Amount,
+						@p_Remark = @p_Remarks,
+						@p_RefId = @RefId,
+						@p_TransactionDate = @p_PaymentDate,
+						@ERROR = @ERROR OUTPUT
 
-				INSERT INTO tbl_PaymentDetails(TripEntryId,Amount,CreditedFrom,CreditedTo, PaymentDate, ModeOfPayment,OthrPymntMeth, UTRTranRefNumber, Remarks, RefId)
-				VALUES(@P_TripEntryId,  @p_Amount,@P_CreditedFrom,@P_CreditedTo, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId)
+						IF ISNULL(@ERROR, '') <> '' 
+						BEGIN 
+							RAISERROR(@ERROR, 16, 1); 
+						END
+				END
+				ELSE
+				BEGIN 
+					RAISERROR('DATA SHOULD BE AVAILABALE FOR TRANSACTION.', 16, 1); 
+				END
 
-				EXEC pr_Transactions
-					@p_DrEntityAccountId = @DrAccountId,
-					@p_CrEntityAccountId = @CrAccountId,
-					@p_TransactionAmount = @p_Amount,
-					@p_Remark = @p_Remarks,
-					@p_RefId = @RefId,
-					@p_TransactionDate = @p_PaymentDate
 			COMMIT TRAN
 		END TRY
 		BEGIN CATCH
 			IF @@TRANCOUNT > 0
+				SET @ERROR = ERROR_MESSAGE()
 				ROLLBACK TRAN;
-
-			THROW;
+			THROW
 		END CATCH
 	END
 
 	ELSE IF @p_Action = 'GET-LEDGER'
 	BEGIN
-		SELECT l.TransactionDate, ISNULL(ea.Name, ea.VehicleNumber) EntityAccount, l.Remark, pd.ReferenceNumber,
+		SELECT l.TransactionDate, ISNULL(ea.Name, ea.VehicleNumber) EntityAccount, l.Remark, pd.UTRTranRefNumber,
 		CASE l.TransactionType WHEN 'DEBIT' then l.Amount ELSE NULL END AS Debit,
 		CASE l.TransactionType WHEN 'CREDIT' then l.Amount ELSE NULL END AS Credit
 		FROM tbl_Ledger l WITH (NOLOCK)
@@ -95,9 +113,34 @@ BEGIN
 
 	ELSE IF @p_Action ='GET-TRIPNUMBER'
 	BEGIN 
-	  SELECT TripId,TripNumber
-      FROM b_TripEntry 
+	  SELECT TripId,TripNumber,ISNULL(AmtForBkingPrty,0) Amount ,Name
+      FROM b_TripEntry B WITH (NOLOCK)
+	  INNER JOIN tbl_EntityAccount P WITH (NOLOCK) ON P.EntityAccountId = B.BookingPartyId
 	  WHERE ISNULL(TRIPSTATUS,0)  = 0
+
+	  SELECT EntityAccountId,ISNULL(AccountNumber,'') AccountNumber,Name
+	  FROM tbl_EntityAccount WITH (NOLOCK)
+	  WHERE ISNULL(EntityAccountType,'') = 'ACCOUNT'
+	 
 	END
 END
 GO
+--BEGIN TRAN
+--DECLARE @ERROR AS VARCHAR(500)
+--EXEC pr_PaymentEntry
+--@p_Action= 'MAKE-TRANSACTION',
+--@p_PaymentType= 'RECEIPT',
+--@P_TripEntryId= 1,
+--@p_ModeOfPayment= 'CASH',
+--@p_CreditedTo= 39,
+--@p_Amount= 6000.00,
+--@p_PaymentDate= '2026-02-07 00:00:00',
+--@p_ReferenceNumber = null,
+--@P_OthrPymntMeth = '',
+--@p_EntityAccountId= 0,
+--@p_Remarks= 'sdfsdfsdfsdfsdfsdf',
+--@ERROR = @ERROR OUTPUT
+--SELECT @ERROR
+----SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC
+--ROLLBACK TRAN
+

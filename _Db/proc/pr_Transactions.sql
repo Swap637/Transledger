@@ -1,44 +1,69 @@
-if OBJECT_ID('pr_Transactions') is not null
-begin
-	drop proc pr_Transactions
-end
-go
-create proc pr_Transactions(
-	@p_DrEntityAccountId int,
-	@p_CrEntityAccountId int,
-	@p_TransactionAmount money,
-	@p_Remark varchar(500),
-	@p_RefId uniqueidentifier,
-	@p_TransactionDate datetime
-)
-as
-begin
-	declare @NewTransactionId varchar(50)
+IF OBJECT_ID('pr_Transactions') IS NOT NULL
+BEGIN
+	DROP PROC pr_Transactions
+END
+GO
+CREATE PROC pr_Transactions(  
+ @p_DrEntityAccountId     INT,  
+ @p_CrEntityAccountId     INT,  
+ @p_TransactionAmount     MONEY,  
+ @p_Remark                VARCHAR(500),  
+ @p_RefId                 UNIQUEIDENTIFIER,  
+ @p_TransactionDate       DATETIME,  
+ @error                   VARCHAR(MAX) = NULL OUTPUT  
+)  
+AS  
+BEGIN  
+BEGIN TRY  
+BEGIN TRAN  
+   DECLARE @NewTransactionId VARCHAR(50)  
+  
+  WHILE 1 = 1  
+	BEGIN  
+		SET @NewTransactionId = 'TXN' +  
+			RIGHT(  
+				'0000000000' + CAST(ABS(CHECKSUM(NEWID())) AS VARCHAR(10)),  
+				10  
+			)  
+  
+		IF NOT EXISTS(SELECT 1 FROM tbl_Ledger WITH (NOLOCK) WHERE TransactionId = @NewTransactionId)  
+		BEGIN
+			BREAK;  
+		END
+	END
 
-	while 1 = 1
-	begin
-		SET @NewTransactionId = 'TXN' +
-			RIGHT(
-				CAST(ABS(CHECKSUM(NEWID())) AS VARCHAR(10))
-				+ '0000000000',
-				10
-			)
-
-		if not exists(select 1 from tbl_Ledger where TransactionId = @NewTransactionId)
-			break;
-	end
-
-	insert into tbl_Ledger(EntityAccountId, TransactionId, Amount, TransactionType, TransactionDate, Remark, RefId)
-	values(@p_DrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'DEBIT', @p_TransactionDate, @p_Remark, @p_RefId)
-
-	insert into tbl_Ledger(EntityAccountId, TransactionId, Amount, TransactionType, TransactionDate, Remark, RefId)
-	values(@p_CrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'CREDIT', @p_TransactionDate, @p_Remark, @p_RefId)
-
-	update tbl_EntityAccount
-	set Balance = isnull(Balance, 0) - isnull(@p_TransactionAmount, 0)
-	where EntityAccountId = @p_DrEntityAccountId;
-
-	update tbl_EntityAccount
-	set Balance = isnull(Balance, 0) + isnull(@p_TransactionAmount, 0)
-	where EntityAccountId = @p_CrEntityAccountId;
-end
+ INSERT INTO tbl_Ledger(EntityAccountId, TransactionId, Amount, TransactionType, TransactionDate, Remark, RefId)  
+ VALUES(@p_DrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'DEBIT', @p_TransactionDate, @p_Remark, @p_RefId)  
+  
+ INSERT INTO tbl_Ledger(EntityAccountId, TransactionId, Amount, TransactionType, TransactionDate, Remark, RefId)  
+ VALUES(@p_CrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'CREDIT', @p_TransactionDate, @p_Remark, @p_RefId)  
+  
+ UPDATE tbl_EntityAccount  
+ SET Balance = ISNULL(Balance, 0) - ISNULL(@p_TransactionAmount, 0)  
+ WHERE EntityAccountId = @p_DrEntityAccountId;  
+  
+ UPDATE tbl_EntityAccount  
+ SET Balance = ISNULL(Balance, 0) + ISNULL(@p_TransactionAmount, 0)  
+ WHERE EntityAccountId = @p_CrEntityAccountId;  
+  
+COMMIT TRAN  
+END TRY  
+BEGIN CATCH  
+ ROLLBACK TRAN  
+ SET @error = ERROR_MESSAGE()  
+END CATCH  
+END  
+GO
+BEGIN TRAN
+DECLARE @ERROR AS VARCHAR(MAX)
+EXEC pr_Transactions
+@p_DrEntityAccountId = 17,
+@p_CrEntityAccountId = 39,
+@p_TransactionAmount = 6000,
+@p_Remark = 'SDFSDF',
+@p_RefId = 'D510BEFF-2D05-4BAD-B32F-1E18ACA9564B',
+@p_TransactionDate = '2026-07-02',
+@ERROR = @ERROR OUTPUT
+SELECT @ERROR
+select * from tbl_Ledger
+ROLLBACK TRAN

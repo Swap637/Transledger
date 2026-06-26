@@ -326,11 +326,14 @@ namespace TransLedger.Controllers
                 {
                     { "@p_Action", "MAKE-TRANSACTION" },
                     { "@p_PaymentType", model.PaymentType },
-                    { "@p_EntityAccountId", model.EntityAccountId },
-                    { "@p_Amount", model.Amount },
-                    { "@p_PaymentDate", model.Date },
+                    { "@P_TripEntryId", model.tripNumber },
                     { "@p_ModeOfPayment", model.ModeOfPayment },
+                    { "@p_CreditedTo",model.Credited_Accountid},
+                    { "@p_Amount", model.Amount},
+                    { "@p_PaymentDate", model.Date },
                     { "@p_ReferenceNumber", model.ReferenceNumber },
+                    { "@P_OthrPymntMeth", string.IsNullOrWhiteSpace(model.OtherPaymentMethod) ? "" : model.OtherPaymentMethod },
+                    { "@p_EntityAccountId", model.Credited_Accountid },
                     { "@p_Remarks", model.Remarks }
                 };
 
