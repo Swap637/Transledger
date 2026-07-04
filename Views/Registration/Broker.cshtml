@@ -31,18 +31,18 @@
             <div class="row">
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Broker Name</label><span class="text-danger">*</span>
+                    <label class="form-label">Broker Company Name</label><span class="text-danger">*</span>
                     <input class="form-control" maxlength="100" onkeypress="return /[a-zA-Z]/i.test(event.key)" placeholder="Enter Broker Name" asp-for="Name" required />
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">PAN</label><span class="text-danger">*</span>
-                    <input class="form-control" maxlength="10" minlength="10" placeholder="Enter PAN Number" asp-for="PAN" required />
+                    <label class="form-label">PAN</label>
+                    <input class="form-control" maxlength="10" minlength="10" placeholder="Enter PAN Number" asp-for="PAN"  />
                 </div>
 
                  <div class="col-md-6 mb-3">
-                    <label class="form-label">Aadhar Number</label><span class="text-danger">*</span>
-                    <input class="form-control" maxlength="12" minlength="12" placeholder="Enter PAN Number" asp-for="AadharNumber" required />
+                    <label class="form-label">Aadhar Number</label>
+                    <input class="form-control" maxlength="12" minlength="12" placeholder="Enter PAN Number" asp-for="AadharNumber"  />
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -60,14 +60,12 @@
                     <input type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" class="form-control" maxlength="10" placeholder="Enter Alternative Mobile No." asp-for="AlterNativeMobileNo" onpaste="return false;" />
                 </div>
 
-               <div class="col-md-6 mb-3">
+               @* <div class="col-md-6 mb-3">
                     <label class="form-label">Commission Percent</label><span class="text-danger">*</span>
                     <input class="form-control" placeholder="Enter Commission Percent" asp-for="CommissionPercent" />
-                </div>
+                </div> *@
  
                
-
-
                 <div class="col-md-12 mb-3">
                     <label class="form-label">Address</label><span class="text-danger">*</span>
                     <textarea class="form-control" maxlength="100" rows="3" placeholder="Enter Address" asp-for="Address" required></textarea>

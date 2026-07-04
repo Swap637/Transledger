@@ -151,7 +151,11 @@ namespace TransLedger.Controllers
             try
             {
                 query = @" SELECT VehicleNumber,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'VEHICLE'  
-                           SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'PARTY'  
+                            SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'PARTY'
+                         UNION ALL -- BROKER
+                          SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'BROKER'
+                         UNION ALL -- COMPNAY
+                          SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'COMPANY'  
                            SELECT Name,EntityAccountId,ISNULL(CommissionPercent,0) CommissionPercent FROM tbl_EntityAccount WHERE EntityAccountType = 'BROKER' 
                            SELECT Name,EntityAccountId,ISNULL(CommissionPercent,0) CommissionPercent FROM tbl_EntityAccount WHERE EntityAccountType = 'DRIVER' ";
 
@@ -306,6 +310,10 @@ namespace TransLedger.Controllers
                     }
                 }
 
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[2].Rows.Count > 0)
+                {
+                    ViewBag.PARTYList = ds.Tables[2];
+                }
                 ViewBag.TripNumber = tripnumbers ?? new List<TripDetails>();
                 ViewBag.AccountNumbers = AccountNumbers ?? new List<TripDetails>();
             }
@@ -340,16 +348,16 @@ namespace TransLedger.Controllers
                 _dataAccess.ExecuteSP("pr_PaymentEntry", parameters);
 
                 TempData["AlertType"] = "success";
-                TempData["AlertMsg"] = "Payment entry save successfully.";
+                TempData["AlertMsg"] = "Payment entry saved successfully.";
 
-                return View();
+                return RedirectToAction("PaymentEntry");
             }
             catch (Exception ex)
             {
                 TempData["AlertType"] = "danger";
                 TempData["AlertMsg"] = ex.Message;
 
-                return View(model);
+                return RedirectToAction("PaymentEntry");
             }
         }
 

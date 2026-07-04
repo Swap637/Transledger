@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "E:\\JAVASTS\\Transport Project\\TransLedger\\TransLedger.csproj": {}
+    "C:\\JAVA\\Transport\\Swap637\\Transledger\\TransLedger.csproj": {}
   },
   "projects": {
-    "E:\\JAVASTS\\Transport Project\\TransLedger\\TransLedger.csproj": {
+    "C:\\JAVA\\Transport\\Swap637\\Transledger\\TransLedger.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\JAVASTS\\Transport Project\\TransLedger\\TransLedger.csproj",
+        "projectUniqueName": "C:\\JAVA\\Transport\\Swap637\\Transledger\\TransLedger.csproj",
         "projectName": "TransLedger",
-        "projectPath": "E:\\JAVASTS\\Transport Project\\TransLedger\\TransLedger.csproj",
-        "packagesPath": "C:\\Users\\swapnilk\\.nuget\\packages\\",
-        "outputPath": "E:\\JAVASTS\\Transport Project\\TransLedger\\obj\\",
+        "projectPath": "C:\\JAVA\\Transport\\Swap637\\Transledger\\TransLedger.csproj",
+        "packagesPath": "C:\\Users\\JOHN\\.nuget\\packages\\",
+        "outputPath": "C:\\JAVA\\Transport\\Swap637\\Transledger\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\swapnilk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\JOHN\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -78,7 +79,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.316/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

@@ -38,8 +38,6 @@ BEGIN
 	IF ISNULL(@p_Mode,0)=0
 		BEGIN
 		
-		 
-
 		-- Get the next running number for today
 		SELECT @RunningNo = ISNULL(MAX(CAST(RIGHT(TripNumber,4) AS INT)),0) + 1
 		FROM b_TripEntry
@@ -53,6 +51,7 @@ BEGIN
 			(TripNumber,LRBiltyNumber,VehicleId,TripDate,AmtforOwner,BrokerId,AmtForBroker,BookingPartyId,AmtForBkingPrty,Driverid,LoadingPoint,UnloadingPoint,Remarks,TripStatus,CreatedBy,CreatedOn)
 		 VALUES(@TripNumber,@p_LRNumber,@p_VehicleNumber,@p_Date,@p_AmtforOwner,@p_BrokerId,@p_AmtForBroker,@p_BookingPartyId,@p_AmtForBkingPrty,@p_Driverid,@p_LoadingPoint,      
 			 @p_UnloadingPoint,@p_Remarks,0,1,GETDATE());
+
 		SELECT SCOPE_IDENTITY() AS NewTripId;
 	END
 	-- <Fetch Vehicle Details>

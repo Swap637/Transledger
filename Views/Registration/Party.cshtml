@@ -41,11 +41,11 @@
                 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Contact Person Name</label>
-                    <input type="text" class="form-control" placeholder="Enter Contact Person Name" asp-for="ContactPersonName" required onpaste="return false;" />
+                    <input type="text" class="form-control" placeholder="Enter Contact Person Name" asp-for="ContactPersonName" onpaste="return false;" />
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Contact No</label>
+                    <label class="form-label">Contact No</label><span class="text-danger">*</span>
                     <input type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" class="form-control" maxlength="10" placeholder="Enter Contact Number" asp-for="ContactNo" required onpaste="return false;" />
                 </div>
                 <div class="col-md-6 mb-3">
@@ -55,11 +55,11 @@
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-control" placeholder="Enter Email Address" asp-for="Email" required onpaste="return false;" />
+                    <input type="email" class="form-control" placeholder="Enter Email Address" asp-for="Email" onpaste="return false;" />
                 </div>
 
                 <div class="col-md-12 mb-3">
-                    <label class="form-label">Address</label>
+                    <label class="form-label">Address</label><span class="text-danger">*</span>
                     <textarea type="text" class="form-control" rows="3" placeholder="Enter Address" asp-for="Address" onpaste="return false;" required></textarea>
                 </div>
 

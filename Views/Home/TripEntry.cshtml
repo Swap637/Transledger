@@ -51,24 +51,19 @@
             </div>
 
             <div class="row">
-
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">LR/Bilty Number</label>
-                    <input type="text" class="form-control" autocomplete="new-password" max="20" asp-for="LRBiltyNumber" maxlength="100" required placeholder="Enter LR/Bilty Number" onpaste="return false;" />
+                    <label class="form-label">Date</label><span class="text-danger">*</span>
+                    <input class="form-control" asp-for="Date"
+                           value="@DateTime.Now.ToString("yyyy-MM-dd")" type="date" required />
                 </div>
 
-                @*<div class="col-md-6 mb-3">
-                    <label class="form-label">LR Number</label>
-                    <input type="text" class="form-control" maxlength="10" asp-for="LRNumber" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" required placeholder="Enter LR Number" />
-                </div> *@
-
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Vehicle Number</label>
-                    <select class="form-control" asp-for="VehicleNumber" id="uxVehical" value="EntityAccountId"  required>
+                    <label class="form-label">Vehicle Number</label><span class="text-danger">*</span>
+                    <select class="form-control" asp-for="VehicleNumber" id="uxVehical" value="EntityAccountId" required>
                         <option value="">Select Vehicle Number</option>
                         @foreach (DataRow row in VEHICLEList.Rows)
                         {
-                             <option value="@row["EntityAccountId"]">@row["VehicleNumber"]</option>
+                            <option value="@row["EntityAccountId"]">@row["VehicleNumber"]</option>
                         }
                     </select>
                 </div>
@@ -92,21 +87,8 @@
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Date</label>
-                    <input class="form-control" asp-for="Date" 
-                    value="@DateTime.Now.ToString("yyyy-MM-dd")"  type="date" required />
-                </div>
-            </div>
-            <div class="row">
-
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Hiring Amount For the owner (₹)</label>
-                    <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountForowner" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
-                </div>
-
-                <div class="col-md-4 mb-3">
                     <label class="form-label">Broker (if applicable)</label>
-                    <select class="form-control" asp-for="BrokerId" id="uxBrocker" required>
+                    <select class="form-control" asp-for="BrokerId" id="uxBrocker">
                         <option value="">Select Broker</option>
                         @foreach (DataRow row in BROKERList.Rows)
                         {
@@ -115,10 +97,37 @@
                     </select>
                 </div>
 
+
+
+                @*<div class="col-md-6 mb-3">
+                    <label class="form-label">LR Number</label>
+                    <input type="text" class="form-control" maxlength="10" asp-for="LRNumber" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" required placeholder="Enter LR Number" />
+                </div> *@
+            </div>
+            <div class="row">
+
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Hiring Amount For Broker (₹)</label>
-                    <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountForBroker" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
+                    <label class="form-label">Booking Party</label><span class="text-danger">*</span>
+                    <select class="form-control" id="uxBookingParty" asp-for="BookingPartyId" required>
+                        <option value="">Select Booking Party</option>
+                        @foreach (DataRow row in PARTYList.Rows)
+                        {
+                            <option value="@row["EntityAccountId"]">@row["Name"]</option>
+                        }
+                    </select>
                 </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Hiring Amount For the owner/Broker (₹)</label><span class="text-danger">*</span>
+                    <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountForowner" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">LR/Bilty Number (If Applicable)</label>
+                    <input type="text" class="form-control" autocomplete="new-password" max="20" asp-for="LRBiltyNumber" maxlength="100" placeholder="Enter LR/Bilty Number" onpaste="return false;" />
+                </div>
+
+               
             </div>
 
              @*    <div class="col-md-6 mb-3">
@@ -126,24 +135,18 @@
                     <input type="text" class="form-control" maxlength="10" asp-for="LRNumber" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" required placeholder="Enter LR Number" />
                 </div> *@
             <div class="row">
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Booking Party</label>
-                    <select class="form-control" id="uxBookingParty" asp-for="BookingPartyId" required>
-                        <option value="">Select Booking Party</option>
-                        @foreach (DataRow row in PARTYList.Rows)
-                        {
-                             <option value="@row["EntityAccountId"]">@row["Name"]</option>
-                        }
-                    </select>
-                </div>
+@*                 <div class="col-md-4 mb-3">
+                    <label class="form-label">Hiring Amount For Broker (₹)</label>
+                    <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountForBroker" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
+                </div> *@
 
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Hiring Amount from Party (₹)</label>
+                    <label class="form-label">Hiring Amount from Party (₹)</label><span class="text-danger">*</span>
                     <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountfromParty" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
                 </div>
 
                <div class="col-md-4 mb-3">
-                    <label class="form-label">Driver</label>
+                    <label class="form-label">Driver</label><span class="text-danger">*</span>
                     <select class="form-control" asp-for="Driver" id="uxDriver" required>
                         <option value="">Select Driver</option>
                         @foreach (DataRow row in DriverList.Rows)
@@ -163,12 +166,12 @@
                 </div> *@
 
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Loading Point</label>
+                    <label class="form-label">Loading Point</label><span class="text-danger">*</span>
                     <input type="text" class="form-control" autocomplete="new-password" asp-for="LoadingPoint" maxlength="100" required placeholder="Enter Loading Point" onpaste="return false;" />
                 </div>
 
                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Unloading Point</label>
+                    <label class="form-label">Unloading Point</label><span class="text-danger">*</span>
                     <input type="text" class="form-control" autocomplete="new-password" maxlength="100" asp-for="UnloadingPoint" onpaste="return false;" required placeholder="Enter Unloading Point" />
                 </div>
 

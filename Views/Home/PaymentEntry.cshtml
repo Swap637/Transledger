@@ -1,9 +1,19 @@
 ﻿@model TransLedger.Models.PaymentEntryViewModel
+@using System.Data
+@using Newtonsoft.Json
+
 @{
     string alertType = TempData["AlertType"]?.ToString() ?? "";
     string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
-    var tripNumbers = @Html.Raw(Json.Serialize(ViewBag.TripNumber));
-    var AccountNumbers = @Html.Raw(Json.Serialize(ViewBag.AccountNumbers));
+    var tripNumbers = ViewBag.TripNumber != null
+      ? Html.Raw(System.Text.Json.JsonSerializer.Serialize((object)ViewBag.TripNumber))
+      : Html.Raw("[]");
+
+    var accountNumbers = ViewBag.AccountNumbers != null
+        ? Html.Raw(System.Text.Json.JsonSerializer.Serialize((object)ViewBag.AccountNumbers))
+        : Html.Raw("[]");
+
+    DataTable PARTYList = ViewBag.PARTYList ?? new DataTable();
 }
 
 <div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
@@ -31,25 +41,24 @@
             </div>
 
             <div class="row">
-
                 <div class="col-12 mb-3 d-flex gap-4">
                     <div class="form-check">
                         <input class="form-check-input" type="radio" asp-for="PaymentType" value="RECEIPT" id="receipt" checked>
                         <label class="form-check-label" for="receipt">
-                            <span class="text-success"><i class="bi bi-currency-rupee"></i></span> Receipt (Cr)
+                            <span class="text-success"><i class="bi bi-currency-rupee"></i></span> Cash In (Cr)
                         </label>
                     </div>
 
                     <div class="form-check">
                         <input class="form-check-input" type="radio" asp-for="PaymentType" value="PAYMENT" id="payment">
                         <label class="form-check-label" for="payment">
-                            <span class="text-danger"><i class="bi bi-credit-card-2-back"></i></span> Payment (Dr)
+                            <span class="text-danger"><i class="bi bi-credit-card-2-back"></i></span> Cash Out (Dr)
                         </label>
                     </div>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Trip Number</label><span class="text-danger">*</span>
+                    <label class="form-label">Trip Number</label><span id="uxtripnumbermark" class="text-danger">*</span>
                     <select class="form-control" id="uxTripNumber" asp-for="tripNumber" required>
                         <option value="">-- Select Trip Number --</option>
                         @if (ViewBag.TripNumber != null)
@@ -62,30 +71,28 @@
                     </select>
                 </div>
 
-                @* <div class="col-md-6 mb-3">
-                    <label class="form-label">Entity Type</label>
-                    <select class="form-control" id="entityType" required>
-                        <option value="">Select Entity Type</option>
-                        <option value="COMPANY">Company</option>
-                        <option value="PARTY">Party</option>
-                        <option value="BROKER">Broker</option>
-                        <option value="VEHICLE">Vehicle</option>
-                        <option value="DRIVER">Driver</option>
-                    </select>
-                </div> *@
-
-             @*    <div class="col-md-6 mb-3">
-                    <label class="form-label">Entity</label>
-                    <select class="form-control" id="entity" asp-for="EntityAccountId" disabled required>
-                        <option value="">Select Entity</option>
-                    </select>
-                </div> *@
                 <input type="hidden" asp-for="HiddenTripid" id="TripId"/>
                 
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Credited From</label><span class="text-danger">*</span>
+                <div class="col-md-6 mb-3" id="uxcreditedfrom">
+                    <label class="form-label" id="uxCreditelabel">Credited From</label><span class="text-danger">*</span>
                     <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" autocomplete="new-password" id="uxcreditedfrom" maxlength="50" disabled />
+ 
                 </div>
+
+               <div class="col-md-6 mb-3 d-none" id="uxdebitedfrom">
+                    <label class="form-label" id="uxCreditelabel">Debited From</label><span class="text-danger">*</span>
+                    <select class="form-control" asp-for="Credited_Accountid" id="uxcreditedaccount" required>
+                        <option value="">-- Select Credited Account --</option>
+                        @if (ViewBag.AccountNumbers != null)
+                        {
+                            @foreach (var item in (List<TripDetails>)ViewBag.AccountNumbers)
+                            {
+                                <option value="@item.Value">@item.Text - @item.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Mode of Payment</label><span class="text-danger">*</span>
                     <select class="form-control" id="paymentMode" asp-for="ModeOfPayment" required>
@@ -98,7 +105,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-6 mb-3">
+                <div class="col-md-6 mb-3" id="uxcreditedto">
                     <label class="form-label">Credited To</label><span class="text-danger">*</span>
                     <select class="form-control" asp-for="Credited_Accountid" id="uxcreditedaccount" required>
                         <option value="">-- Select Credited Account --</option>
@@ -111,6 +118,18 @@
                         }
                     </select>
                 </div>
+
+                <div class="col-md-6 mb-3 d-none" id="uxcreditedtocashout">
+                    <label class="form-label">Credited To</label><span class="text-danger">*</span>
+                    <select class="form-control" id="uxBookingParty" asp-for="BookingPartyId" required>
+                        <option value="">Select Booking Party</option>
+                        @foreach (DataRow row in PARTYList.Rows)
+                        {
+                            <option value="@row["EntityAccountId"]">@row["Name"]</option>
+                        }
+                    </select>
+                </div>
+
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Amount (₹)</label><span class="text-danger">*</span>
                     <input class="form-control" maxlength="9" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="0.00" asp-for="Amount" required />
@@ -211,6 +230,30 @@
             }
             else {
                 $('#refNo').prop('disabled', true).prop('required', false).val('');
+            }
+        });
+
+         $('#payment').on('change', function () {
+            if ($(this).val() === 'PAYMENT') {
+                $('#uxtripnumbermark').addClass('d-none');
+                $('#uxTripNumber').removeAttr('required');
+                $('#uxCreditelabel').text('Debited From');
+                $('#uxdebitedfrom').removeClass('d-none');
+                $('#uxcreditedfrom').addClass('d-none');
+                $('#uxcreditedtocashout').removeClass('d-none');
+                $('#uxcreditedto').addClass('d-none');
+            }
+        });
+
+        $('#receipt').on('change', function () {
+            if ($(this).val() === 'RECEIPT') {
+                $('#uxtripnumbermark').removeClass('d-none');
+                $('#uxTripNumber').prop('required', true);
+                $('#uxCreditelabel').text('Credited From');
+                $('#uxdebitedfrom').addClass('d-none');
+                $('#uxcreditedfrom').removeClass('d-none');
+                 $('#uxcreditedtocashout').addClass('d-none');
+                $('#uxcreditedto').removeClass('d-none');
             }
         });
     </script>

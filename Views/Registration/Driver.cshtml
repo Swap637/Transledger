@@ -36,8 +36,8 @@
 
         
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Aadhar Number</label><span class="text-danger">*</span>
-                    <input class="form-control" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" maxlength="12" minlength="12" pattern="[0-9]{12}" placeholder="Enter Aadhar Number" asp-for="AadharNumber" required />
+                    <label class="form-label">Aadhar Number</label>
+                    <input class="form-control" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" maxlength="12" minlength="12" pattern="[0-9]{12}" placeholder="Enter Aadhar Number" asp-for="AadharNumber"/>
                 </div>
                  <div class="col-md-6 mb-3">
                     <label class="form-label">License Number</label><span class="text-danger">*</span>
@@ -65,14 +65,22 @@
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Alternative Mobile No</label><span class="text-danger">*</span>
+                    <label class="form-label">Alternative Mobile No</label>
                     <input type="text" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" class="form-control" maxlength="10" placeholder="Enter Alternative Mobile No." asp-for="AlterNativeMobileNo" onpaste="return false;" />
                 </div>
               @*   <div class="col-md-6 mb-3">
                     <label class="form-label">Email</label>
                     <input class="form-control" placeholder="Enter Email Address" asp-for="Email" />
                 </div> *@
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Aadhar</label>
+                    <input class="form-control" type="file">
+                </div>
 
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Driving License</label>
+                    <input class="form-control" type="file">
+                </div>
                 <div class="col-md-12 mb-3">
                     <label class="form-label">Address</label><span class="text-danger">*</span>
                     <textarea class="form-control" maxlength="=200" rows="3" placeholder="Enter Address" asp-for="Address" required></textarea>

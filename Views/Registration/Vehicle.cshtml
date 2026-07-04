@@ -51,32 +51,31 @@
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Vehicle Number</label>
-                        <input class="form-control" placeholder="Enter Vehicle Number" asp-for="VehicleNumber" />
+                        <label class="form-label">Vehicle Number</label><span class="text-danger">*</span>
+                        <input class="form-control" placeholder="Enter Vehicle Number" required asp-for="VehicleNumber" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Vehicle Type</label>
-                        <select class="form-control" asp-for="VehicleType">
+                        <label class="form-label">Vehicle Type</label><span class="text-danger">*</span>
+                        <select class="form-control" asp-for="VehicleType" required>
                             <option value="">Vehicle Type</option>
                             <option value="TRUCK">Truck</option>
                             <option value="LCV">LCV</option>
                             <option value="TRAILER">Trailer</option>
                             <option value="JCB32Feet">JCB 32 Feet</option>
                             <option value="CONTAINER">Container</option>
-                            <option value="TANKER">Tanker</option>
                             <option value="PICKUP">Pickup</option>
                         </select>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Capacity (in tons)</label>
-                        <input class="form-control" type="text" placeholder="Capacity (in tons)" asp-for="CapacityInTons">
+                        <label class="form-label">Capacity (in tons)</label><span class="text-danger">*</span>
+                        <input class="form-control" type="text" placeholder="Capacity (in tons)" required asp-for="CapacityInTons">
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Permit Type</label>
-                        <select class="form-control" asp-for="PermitType">
+                        <label class="form-label">Permit Type</label><span class="text-danger">*</span>
+                        <select class="form-control" asp-for="PermitType" required>
                             <option value="">Select Permit Type</option>
                             <option value="NATIONAL">National Permit</option>
                             <option value="STATE">State Permit</option>
@@ -126,18 +125,18 @@
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Owner Name</label>
-                        <input class="form-control" type="text" placeholder="Enter full name of owner" asp-for="OwnerName">
+                        <label class="form-label">Owner Name</label><span class="text-danger">*</span>
+                        <input class="form-control" type="text" placeholder="Enter full name of owner" required asp-for="OwnerName">
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Aadhar Number</label>
-                        <input class="form-control" type="text" placeholder="Enter Aadhar Number" asp-for="AadharNumber">
+                        <label class="form-label">Aadhar Number</label><span class="text-danger">*</span>
+                        <input class="form-control" type="text" placeholder="Enter Aadhar Number" required asp-for="AadharNumber">
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">PAN Number</label>
-                        <input class="form-control" type="text" placeholder="Enter PAN Number" asp-for="PAN">
+                        <label class="form-label">PAN Number</label><span class="text-danger">*</span>
+                        <input class="form-control" type="text" placeholder="Enter PAN Number" required asp-for="PAN">
                     </div>
                 </div>
 
@@ -165,7 +164,12 @@
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Registration Certificate (RC)</label>
+                        <label class="form-label">Registration Certificate (RC)</label><span class="text-danger">*</span>
+                        <input class="form-control" type="file" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Pan Card</label><span class="text-danger">*</span>
                         <input class="form-control" type="file">
                     </div>
 

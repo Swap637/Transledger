@@ -3,6 +3,7 @@
     public class PaymentEntryViewModel
     {   
         public string PaymentType { get; set; }
+        public int BookingPartyId { get; set; }
         public int EntityAccountId { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }

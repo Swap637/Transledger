@@ -121,6 +121,15 @@ BEGIN
 	  SELECT EntityAccountId,ISNULL(AccountNumber,'') AccountNumber,Name
 	  FROM tbl_EntityAccount WITH (NOLOCK)
 	  WHERE ISNULL(EntityAccountType,'') = 'ACCOUNT'
+	  
+
+		SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'PARTY'
+		UNION ALL -- BROKER
+		SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'BROKER'
+		UNION ALL -- COMPNAY
+		SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'COMPANY'
+		UNION ALL -- VEHICLE
+		SELECT VehicleNumber,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'VEHICLE'
 	 
 	END
 END
