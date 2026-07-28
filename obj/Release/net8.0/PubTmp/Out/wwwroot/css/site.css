@@ -5,3 +5,21 @@
 h1, h2, h3, h4, h5, h6, p, .table {
     margin: 0;
 }
+
+.status-completed {
+    background-color: #d1e7dd !important;
+    color: #0f5132 !important;
+    border-color: #198754 !important;
+}
+
+.status-cancelled {
+    background-color: #f8d7da !important;
+    color: #842029 !important;
+    border-color: #dc3545 !important;
+}
+
+.status-pending {
+    background-color: #fff3cd !important;
+    color: #664d03 !important;
+    border-color: #ffc107 !important;
+}

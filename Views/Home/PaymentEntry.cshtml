@@ -1,7 +1,5 @@
 ﻿@model TransLedger.Models.PaymentEntryViewModel
 @using System.Data
-@using Newtonsoft.Json
-
 @{
     string alertType = TempData["AlertType"]?.ToString() ?? "";
     string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
@@ -43,14 +41,14 @@
             <div class="row">
                 <div class="col-12 mb-3 d-flex gap-4">
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" asp-for="PaymentType" value="RECEIPT" id="receipt" checked>
+                        <input class="form-check-input" type="radio" asp-for="PaymentType" value="CASHIN" id="receipt" checked>
                         <label class="form-check-label" for="receipt">
                             <span class="text-success"><i class="bi bi-currency-rupee"></i></span> Cash In (Cr)
                         </label>
                     </div>
 
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" asp-for="PaymentType" value="PAYMENT" id="payment">
+                        <input class="form-check-input" type="radio" asp-for="PaymentType" value="CASHOUT" id="payment">
                         <label class="form-check-label" for="payment">
                             <span class="text-danger"><i class="bi bi-credit-card-2-back"></i></span> Cash Out (Dr)
                         </label>
@@ -73,15 +71,14 @@
 
                 <input type="hidden" asp-for="HiddenTripid" id="TripId"/>
                 
-                <div class="col-md-6 mb-3" id="uxcreditedfrom">
+                <div class="col-md-6 mb-3" id="uxcreditedfromdiv">
                     <label class="form-label" id="uxCreditelabel">Credited From</label><span class="text-danger">*</span>
                     <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" autocomplete="new-password" id="uxcreditedfrom" maxlength="50" disabled />
- 
                 </div>
 
                <div class="col-md-6 mb-3 d-none" id="uxdebitedfrom">
                     <label class="form-label" id="uxCreditelabel">Debited From</label><span class="text-danger">*</span>
-                    <select class="form-control" asp-for="Credited_Accountid" id="uxcreditedaccount" required>
+                    <select class="form-control" asp-for="DebitedFromacctid" id="uxcreditedaccount" required>
                         <option value="">-- Select Credited Account --</option>
                         @if (ViewBag.AccountNumbers != null)
                         {
@@ -91,7 +88,7 @@
                             }
                         }
                     </select>
-                </div>
+               </div>
 
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Mode of Payment</label><span class="text-danger">*</span>
@@ -121,7 +118,7 @@
 
                 <div class="col-md-6 mb-3 d-none" id="uxcreditedtocashout">
                     <label class="form-label">Credited To</label><span class="text-danger">*</span>
-                    <select class="form-control" id="uxBookingParty" asp-for="BookingPartyId" required>
+                    <select class="form-control" asp-for="CreditedToCashout" id="uxBookingParty" asp-for="BookingPartyId" required>
                         <option value="">Select Booking Party</option>
                         @foreach (DataRow row in PARTYList.Rows)
                         {
@@ -174,9 +171,11 @@
             var selectedId = $(this).val();
             var selectedItem = tripNumbers.find(x => x.Value == selectedId);
             $('#TripId').val(selectedId)
+           
             if (selectedItem) {
                $('#Amount').val(selectedItem.Amount);
                $('#uxcreditedfrom').val(selectedItem.Name);
+               console.log(selectedItem.Name)
             } 
             else {
                 $('#Amount').val('');
@@ -234,24 +233,24 @@
         });
 
          $('#payment').on('change', function () {
-            if ($(this).val() === 'PAYMENT') {
+            if ($(this).val() === 'CASHOUT') {
                 $('#uxtripnumbermark').addClass('d-none');
                 $('#uxTripNumber').removeAttr('required');
                 $('#uxCreditelabel').text('Debited From');
                 $('#uxdebitedfrom').removeClass('d-none');
-                $('#uxcreditedfrom').addClass('d-none');
+                $('#uxcreditedfromdiv').addClass('d-none');
                 $('#uxcreditedtocashout').removeClass('d-none');
                 $('#uxcreditedto').addClass('d-none');
             }
         });
 
         $('#receipt').on('change', function () {
-            if ($(this).val() === 'RECEIPT') {
+            if ($(this).val() === 'CASHIN') {
                 $('#uxtripnumbermark').removeClass('d-none');
                 $('#uxTripNumber').prop('required', true);
                 $('#uxCreditelabel').text('Credited From');
                 $('#uxdebitedfrom').addClass('d-none');
-                $('#uxcreditedfrom').removeClass('d-none');
+                $('#uxcreditedfromdiv').removeClass('d-none');
                  $('#uxcreditedtocashout').addClass('d-none');
                 $('#uxcreditedto').removeClass('d-none');
             }

@@ -14,5 +14,7 @@
         public string tripNumber { get; set; }
         public string Credited_Accountid { get; set; }
         public int HiddenTripid { get; set; }
+        public int DebitedFromacctid { get; set; }
+        public int CreditedToCashout { get; set; }
     }
 }

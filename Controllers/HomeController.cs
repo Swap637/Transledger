@@ -336,14 +336,23 @@ namespace TransLedger.Controllers
                     { "@p_PaymentType", model.PaymentType },
                     { "@P_TripEntryId", model.tripNumber },
                     { "@p_ModeOfPayment", model.ModeOfPayment },
-                    { "@p_CreditedTo",model.Credited_Accountid},
                     { "@p_Amount", model.Amount},
                     { "@p_PaymentDate", model.Date },
                     { "@p_ReferenceNumber", model.ReferenceNumber },
                     { "@P_OthrPymntMeth", string.IsNullOrWhiteSpace(model.OtherPaymentMethod) ? "" : model.OtherPaymentMethod },
-                    { "@p_EntityAccountId", model.Credited_Accountid },
                     { "@p_Remarks", model.Remarks }
                 };
+
+                if (model.PaymentType == "CASHIN")
+                {
+                    parameters.Add("@p_EntityAccountId", model.Credited_Accountid);
+                    parameters.Add("@p_CreditedTo", model.Credited_Accountid);
+                }
+                else
+                {
+                    parameters.Add("@p_EntityAccountId", model.DebitedFromacctid);
+                    parameters.Add("@p_CreditedTo", model.CreditedToCashout);
+                }
 
                 _dataAccess.ExecuteSP("pr_PaymentEntry", parameters);
 

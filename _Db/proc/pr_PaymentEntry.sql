@@ -29,11 +29,11 @@ BEGIN
 		BEGIN TRY
 			BEGIN TRAN
 
-				IF @p_PaymentType = 'PAYMENT'
+				IF @p_PaymentType = 'CASHOUT'
 				BEGIN
 				
 					SELECT @DrAccountId = @p_EntityAccountId;
-
+					
 					IF @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
 					BEGIN
 						SELECT @CrAccountId = EntityAccountId FROM tbl_EntityAccount
@@ -49,7 +49,7 @@ BEGIN
 				END
 				ELSE
 				BEGIN
-
+			
 					SELECT @CrAccountId = @p_EntityAccountId;
 
 					IF @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
@@ -66,10 +66,13 @@ BEGIN
 						AND AccountType =  'CASH-IN-HAND'
 					END
 				END
+				SELECT  * FROM tbl_EntityAccount
+						WHERE EntityAccountType = 'ACCOUNT'
+						AND AccountType =  'BANK-ACCOUNT'
 
 				INSERT INTO tbl_PaymentDetails(TripEntryId,Amount,CreditedFrom,CreditedTo, PaymentDate, ModeOfPayment,OthrPymntMeth, UTRTranRefNumber, Remarks, RefId,CreatedOn)
 				VALUES(@P_TripEntryId,  @p_Amount,@P_CreditedFrom,@P_CreditedTo, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId,GETDATE())
-				
+			SELECT @DrAccountId,@CrAccountId
 				IF ISNULL(@DrAccountId,0) <> 0 AND ISNULL(@CrAccountId,0) <> 0 AND ISNULL(@p_Amount,0) > 0
 				BEGIN 
 					  EXEC pr_Transactions
@@ -134,22 +137,22 @@ BEGIN
 	END
 END
 GO
---BEGIN TRAN
---DECLARE @ERROR AS VARCHAR(500)
---EXEC pr_PaymentEntry
---@p_Action= 'MAKE-TRANSACTION',
---@p_PaymentType= 'RECEIPT',
---@P_TripEntryId= 1,
---@p_ModeOfPayment= 'CASH',
---@p_CreditedTo= 39,
---@p_Amount= 6000.00,
---@p_PaymentDate= '2026-02-07 00:00:00',
---@p_ReferenceNumber = null,
---@P_OthrPymntMeth = '',
---@p_EntityAccountId= 0,
---@p_Remarks= 'sdfsdfsdfsdfsdfsdf',
---@ERROR = @ERROR OUTPUT
---SELECT @ERROR
-----SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC
---ROLLBACK TRAN
+BEGIN TRAN
+DECLARE @ERROR AS VARCHAR(500)
+EXEC pr_PaymentEntry
+@p_Action= 'MAKE-TRANSACTION',
+@p_PaymentType= 'CASHIN',
+@P_TripEntryId= 1,
+@p_ModeOfPayment= 'UPI',
+@p_CreditedTo=  null,
+@p_Amount= 6000.00,
+@p_PaymentDate= '2026-02-07 00:00:00',
+@p_ReferenceNumber = null,
+@P_OthrPymntMeth = '',
+@p_EntityAccountId= 41,
+@p_Remarks= 'sdfsdfsdfsdfsdfsdf',
+@ERROR = @ERROR OUTPUT
+SELECT @ERROR
+--SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC
+ROLLBACK TRAN
 
