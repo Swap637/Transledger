@@ -24,8 +24,6 @@
     }
 }
 
-
-
 <div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
     <div>
         <h2>
@@ -97,8 +95,6 @@
                     </select>
                 </div>
 
-
-
                 @*<div class="col-md-6 mb-3">
                     <label class="form-label">LR Number</label>
                     <input type="text" class="form-control" maxlength="10" asp-for="LRNumber" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" required placeholder="Enter LR Number" />
@@ -130,16 +126,7 @@
                
             </div>
 
-             @*    <div class="col-md-6 mb-3">
-                    <label class="form-label">LR Number</label>
-                    <input type="text" class="form-control" maxlength="10" asp-for="LRNumber" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" required placeholder="Enter LR Number" />
-                </div> *@
             <div class="row">
-@*                 <div class="col-md-4 mb-3">
-                    <label class="form-label">Hiring Amount For Broker (₹)</label>
-                    <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountForBroker" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
-                </div> *@
-
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Hiring Amount from Party (₹)</label><span class="text-danger">*</span>
                     <input type="text" class="form-control" autocomplete="new-password" asp-for="HiringAmountfromParty" maxlength="9" onpaste="return false;" onkeypress="return (event.charCode >= 48 && event.charCode <= 57);" placeholder="Enter amount (e.g. 1,250.50)" required />
@@ -159,12 +146,6 @@
             </div>
             <div class="row">
                 <hr class="mt-3 mb-4" />
-
-              @*   <div class="col-md-4 mb-3">
-                    <label class="form-label">Commission/Brokerage (₹)</label>
-                    <input type="text"  class="form-control" id="uxcommissionbrockarage" asp-for="CommissionBrokerage" placeholder="Enter amount (e.g. 1,250.50)" onpaste="return false;" pattern="^\d{1,3}(,\d{3})*(\.\d{2})?$" readonly />
-                </div> *@
-
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Loading Point</label><span class="text-danger">*</span>
                     <input type="text" class="form-control" autocomplete="new-password" asp-for="LoadingPoint" maxlength="100" required placeholder="Enter Loading Point" onpaste="return false;" />
@@ -177,7 +158,7 @@
 
                 <div class="col-md-12 mb-3">
                     <label class="form-label">Remarks</label>
-                    <textarea id="uxremarks" class="form-control" autocomplete="new-password" rows="3" asp-for="Remarks" onpaste="return false;" maxlength="250" required placeholder="Enter Remarks"></textarea>
+                    <textarea id="uxremarks" class="form-control" autocomplete="new-password" rows="3" asp-for="Remarks" onpaste="return false;" maxlength="250" placeholder="Enter Remarks"></textarea>
                 </div>
             </div>
 
@@ -237,37 +218,35 @@
         })
 
         $('form').submit(function (e) {
-           e.preventDefault();
-           let isSelectValid = true;
-           const criticalDropdowns = ['#uxVehical', '#uxBrocker', '#uxBookingParty', '#uxDriver'];
-           criticalDropdowns.forEach(function (id) {
-                const selectElement = $(id);
-                if (selectElement.val() === "") {
-                    isSelectValid = false;
-                    selectElement.addClass('is-invalid').removeClass('is-valid');
-                } else {
-                    selectElement.addClass('is-valid').removeClass('is-invalid');
-                }
-           });
+            e.preventDefault();
+            let isSelectValid = true;
+            // Validate only required select elements
 
-           if (this.checkValidity() === false || !isSelectValid) {
+             $('input[required], select[required], textarea[required]').each(function () {
+                if (this.checkValidity()) {
+                    $(this).addClass('is-valid').removeClass('is-invalid');
+                } else {
+                    isSelectValid = false;
+                    $(this).addClass('is-invalid').removeClass('is-valid');
+                }
+             });
+
+            if (this.checkValidity() === false || !isSelectValid) {
                 e.preventDefault();
                 e.stopPropagation();
-
-                // Force the browser to trigger validation UI styles
                 $(this).addClass('was-validated');
-
-                // Alert the user if the issue is specifically selection-based
                 if (!isSelectValid) {
                     $('#uxmessagesuccesdiv').addClass('d-none');
                     $('#uxmsderrordiv').removeClass('d-none');
                     $('#uxmsgDangerBox').text('Please select valid options for all required dropdown lists.');
                 }
                 return false;
-           }
-           $(this).removeClass('was-validated');
-           $('#uxmessagesuccesdiv').addClass('d-none');
-           $('#uxmsderrordiv').addClass('d-none');
+            }
+
+            $(this).removeClass('was-validated');
+            $('#uxmessagesuccesdiv').addClass('d-none');
+            $('#uxmsderrordiv').addClass('d-none');
+
            $.ajax({
                url:'/Home/TripEntry',
                type:'POST',
@@ -285,16 +264,12 @@
                            $('#LoadingPoint').val('');
                            $('#UnloadingPoint').val('');
                            $('#uxremarks').val('');
-
                            $('input[type="date"]').val(today);
                            $('input[type="text"]').val();
-
                            $('#uxBrocker').val('');
                            $('#uxVehical').val('');
                            $('#uxDriver').val('');
-                          
                            $('#uxBookingParty').val('');
-
                            $('#uxVehical').change();
                            $('#uxmessagesuccesdiv').removeClass('d-none');
                            $('#uxmsgSuccessBox').text(response.message);
@@ -304,6 +279,10 @@
                         $('#uxmsderrordiv').removeClass('d-none');
                         $('#uxmsgDangerBox').text(response.message);
                    }
+
+                    // Remove validation styles
+                    $('form').removeClass('was-validated');
+                    $('input, select, textarea').removeClass('is-valid is-invalid');
                },
                error: function (xhr, status, error) {
                 console.log(error);

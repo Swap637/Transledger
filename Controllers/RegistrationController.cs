@@ -94,12 +94,15 @@ namespace TransLedger.Controllers
         {
             try
             {
-                if (model.ContactNo.ToString() == model.AlterNativeMobileNo.ToString())
+                if (!string.IsNullOrEmpty(model.AlterNativeMobileNo))
                 {
-                    TempData["AlertType"] = "danger";
-                    TempData["AlertMsg"] = "Contact Number and Alternative Mobile Can't be same.";
+                    if (model.ContactNo.ToString() == model.AlterNativeMobileNo.ToString())
+                    {
+                        TempData["AlertType"] = "danger";
+                        TempData["AlertMsg"] = "Contact Number and Alternative Mobile Can't be same.";
 
-                    return Redirect("/registration/party");
+                        return Redirect("/registration/party");
+                    }
                 }
 
                 Dictionary<string, Object> parameters = new Dictionary<string, object>()

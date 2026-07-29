@@ -142,15 +142,15 @@ DECLARE @ERROR AS VARCHAR(500)
 EXEC pr_PaymentEntry
 @p_Action= 'MAKE-TRANSACTION',
 @p_PaymentType= 'CASHIN',
-@P_TripEntryId= 1,
-@p_ModeOfPayment= 'UPI',
-@p_CreditedTo=  null,
-@p_Amount= 6000.00,
-@p_PaymentDate= '2026-02-07 00:00:00',
-@p_ReferenceNumber = null,
-@P_OthrPymntMeth = '',
-@p_EntityAccountId= 41,
-@p_Remarks= 'sdfsdfsdfsdfsdfsdf',
+@P_TripEntryId= 4,
+@p_ModeOfPayment = 'UPI',
+@p_Amount= 54654.00,
+@p_PaymentDate= '30-07-2026 00:00:00',
+@p_ReferenceNumber= 'SDFSD',
+@P_OthrPymntMethB= NULL,
+@p_Remarks= 'EDSDS',
+@p_EntityAccountId = 41,
+@p_CreditedTo=  41,
 @ERROR = @ERROR OUTPUT
 SELECT @ERROR
 --SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC

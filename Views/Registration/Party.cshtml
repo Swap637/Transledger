@@ -2,6 +2,9 @@
 @{
     string alertType = TempData["AlertType"]?.ToString() ?? "";
     string alertMsg = TempData["AlertMsg"]?.ToString() ?? "";
+
+    TempData["AlertType"] = "";
+    TempData["AlertMsg"] = "";
 }
 
 <div class="d-flex flex-column flex-md-row justify-content-md-between mb-5">
