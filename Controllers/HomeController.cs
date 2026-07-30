@@ -292,7 +292,8 @@ namespace TransLedger.Controllers
                             Text = row["TripNumber"].ToString(),
                             Value = row["TripId"].ToString(),
                             Amount = row["Amount"].ToString(),
-                            Name = row["Name"].ToString()
+                            Name = row["Name"].ToString(),
+                            BookingPartyIdhiddentripnumber = row["BookingPartyId"].ToString()
                         });
                     }
                 }
@@ -345,7 +346,7 @@ namespace TransLedger.Controllers
 
                 if (model.PaymentType == "CASHIN")
                 {
-                    parameters.Add("@p_EntityAccountId", model.Credited_Accountid);
+                    parameters.Add("@p_EntityAccountId", model.BookingPartyIdhiddentripnumber);
                     parameters.Add("@p_CreditedTo", model.Credited_Accountid);
                 }
                 else

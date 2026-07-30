@@ -116,7 +116,7 @@ BEGIN
 
 	ELSE IF @p_Action ='GET-TRIPNUMBER'
 	BEGIN 
-	  SELECT TripId,TripNumber,ISNULL(AmtForBkingPrty,0) Amount ,Name
+	  SELECT TripId,TripNumber,ISNULL(AmtForBkingPrty,0) Amount ,Name,BookingPartyId
       FROM b_TripEntry B WITH (NOLOCK)
 	  INNER JOIN tbl_EntityAccount P WITH (NOLOCK) ON P.EntityAccountId = B.BookingPartyId
 	  WHERE ISNULL(TRIPSTATUS,0)  = 0

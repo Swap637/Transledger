@@ -16,5 +16,6 @@
         public int HiddenTripid { get; set; }
         public int DebitedFromacctid { get; set; }
         public int CreditedToCashout { get; set; }
+        public int BookingPartyIdhiddentripnumber { get; set; }
     }
 }
