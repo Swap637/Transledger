@@ -63,13 +63,13 @@
                         {
                             @foreach (var item in (List<TripDetails>)ViewBag.TripNumber)
                             {
-                                <option value="@item.Value" data-bookingpartyid="@item.BookingPartyId">@item.Text</option>
+                                <option value="@item.Value" data-bookingpartyid="@item.BookingPartyIdhiddentripnumber">@item.Text</option>
                             }
                         }
                     </select>
                 </div>
 
-                <input type="hidden" asp-for="BookingPartyIdhiddentripnumber" id="TripId" />
+                <input type="hidden" asp-for="Bookingpartyaccountid" id="TripId" />
                 
                 <div class="col-md-6 mb-3" id="uxcreditedfromdiv">
                     <label class="form-label" id="uxCreditelabel">Credited From</label><span class="text-danger">*</span>
@@ -167,16 +167,14 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        $('#uxTripNumber').change(function () {
-            var bookingPartyId = $(this).find(':selected').data('bookingpartyid');
-            $('#BookingPartyIdhiddentripnumber').val(bookingPartyId);
-        });
-
         $('#uxTripNumber').on('change',function(){
             var selectedId = $(this).val();
             var selectedItem = tripNumbers.find(x => x.Value == selectedId);
             $('#TripId').val(selectedId)
-           
+
+            var bookingPartyId = $(this).find(':selected').data('bookingpartyid');
+            $('#TripId').val(bookingPartyId);
+                
             if (selectedItem) {
                $('#Amount').val(selectedItem.Amount);
                $('#uxcreditedfrom').val(selectedItem.Name);

@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" />
 
     <style>
-        .card {
+        .card{
             max-width: 500px;
         }
 
@@ -33,6 +33,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
+transform: rotate(180deg);
 ">
     <div class="container">
         <section class="vh-100 d-flex justify-content-center align-items-center">
@@ -40,6 +41,7 @@
                 <div class="card-body p-4 py-5">
                     <div class="fw-bold fs-3 text-center mb-5">
                         <i class="bi bi-truck"></i> TransLedger
+                        <marque>____________________________________________________________</marque>
                     </div>
                     @if (!string.IsNullOrWhiteSpace(alertMsg))
                     {
@@ -55,7 +57,7 @@
                                 <label class="form-label">Password</label>
                                 <input class="form-control" style="background-color:#e9d9d936 !important" type="password" placeholder="Enter password" asp-for="Password" />
                                 <button type="button" class="password-toggle btn p-0 px-1 position-absolute"
-                                        style="top: 38px; right: 20px;">
+                                style="top: 38px; right: 20px;">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>

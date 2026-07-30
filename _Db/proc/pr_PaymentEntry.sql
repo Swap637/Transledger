@@ -29,7 +29,7 @@ BEGIN
 		BEGIN TRY
 			BEGIN TRAN
 
-				IF @p_PaymentType = 'CASHOUT'
+				IF @p_PaymentType = 'CASHIN'
 				BEGIN
 				
 					SELECT @DrAccountId = @p_EntityAccountId;
@@ -66,13 +66,10 @@ BEGIN
 						AND AccountType =  'CASH-IN-HAND'
 					END
 				END
-				SELECT  * FROM tbl_EntityAccount
-						WHERE EntityAccountType = 'ACCOUNT'
-						AND AccountType =  'BANK-ACCOUNT'
 
 				INSERT INTO tbl_PaymentDetails(TripEntryId,Amount,CreditedFrom,CreditedTo, PaymentDate, ModeOfPayment,OthrPymntMeth, UTRTranRefNumber, Remarks, RefId,CreatedOn)
 				VALUES(@P_TripEntryId,  @p_Amount,@P_CreditedFrom,@P_CreditedTo, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId,GETDATE())
-			SELECT @DrAccountId,@CrAccountId
+			
 				IF ISNULL(@DrAccountId,0) <> 0 AND ISNULL(@CrAccountId,0) <> 0 AND ISNULL(@p_Amount,0) > 0
 				BEGIN 
 					  EXEC pr_Transactions
@@ -145,14 +142,14 @@ EXEC pr_PaymentEntry
 @P_TripEntryId= 4,
 @p_ModeOfPayment = 'UPI',
 @p_Amount= 54654.00,
-@p_PaymentDate= '30-07-2026 00:00:00',
+@p_PaymentDate= '2026-07-31',
 @p_ReferenceNumber= 'SDFSD',
-@P_OthrPymntMethB= NULL,
+@P_OthrPymntMeth= NULL,
 @p_Remarks= 'EDSDS',
 @p_EntityAccountId = 41,
 @p_CreditedTo=  41,
 @ERROR = @ERROR OUTPUT
 SELECT @ERROR
---SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC
+SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC
 ROLLBACK TRAN
 

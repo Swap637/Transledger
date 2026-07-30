@@ -33,10 +33,10 @@ BEGIN TRAN
 	END
 
  INSERT INTO tbl_Ledger(EntityAccountId, TransactionId, Amount, TransactionType, TransactionDate, Remark, RefId)  
- VALUES(@p_DrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'DEBIT', @p_TransactionDate, @p_Remark, @p_RefId)  
+ VALUES(@p_DrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'DEBIT', GETDATE(), @p_Remark, @p_RefId)  
   
  INSERT INTO tbl_Ledger(EntityAccountId, TransactionId, Amount, TransactionType, TransactionDate, Remark, RefId)  
- VALUES(@p_CrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'CREDIT', @p_TransactionDate, @p_Remark, @p_RefId)  
+ VALUES(@p_CrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'CREDIT', GETDATE(), @p_Remark, @p_RefId)  
   
  UPDATE tbl_EntityAccount  
  SET Balance = ISNULL(Balance, 0) - ISNULL(@p_TransactionAmount, 0)  
@@ -54,16 +54,28 @@ BEGIN CATCH
 END CATCH  
 END  
 GO
-BEGIN TRAN
-DECLARE @ERROR AS VARCHAR(MAX)
-EXEC pr_Transactions
-@p_DrEntityAccountId = 17,
-@p_CrEntityAccountId = 39,
-@p_TransactionAmount = 6000,
-@p_Remark = 'SDFSDF',
-@p_RefId = 'D510BEFF-2D05-4BAD-B32F-1E18ACA9564B',
-@p_TransactionDate = '2026-07-02',
-@ERROR = @ERROR OUTPUT
-SELECT @ERROR
+--BEGIN TRAN
+--DECLARE @ERROR AS VARCHAR(MAX)
+--EXEC pr_Transactions
+--@p_DrEntityAccountId = 17,
+--@p_CrEntityAccountId = 39,
+--@p_TransactionAmount = 6000,
+--@p_Remark = 'SDFSDF',
+--@p_RefId = 'D510BEFF-2D05-4BAD-B32F-1E18ACA9564B',
+--@p_TransactionDate = '2026-07-02',
+--@ERROR = @ERROR OUTPUT
+--SELECT @ERROR
+--select * from tbl_Ledger
+--ROLLBACK TRAN
+
+
 select * from tbl_Ledger
-ROLLBACK TRAN
+select * from tbl_PaymentDetails
+select * from tbl_EntityAccount where EntityAccountId in (11,9,41)
+/*
+	truncate table tbl_Ledger
+	truncate table tbl_transaction
+		truncate table tbl_PaymentDetails
+*/
+
+

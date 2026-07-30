@@ -316,7 +316,7 @@ namespace TransLedger.Controllers
                     ViewBag.PARTYList = ds.Tables[2];
                 }
                 ViewBag.TripNumber = tripnumbers ?? new List<TripDetails>();
-                ViewBag.AccountNumbers = AccountNumbers ?? new List<TripDetails>();
+                    ViewBag.AccountNumbers = AccountNumbers ?? new List<TripDetails>();
             }
             catch (Exception ex)
             {
@@ -346,7 +346,7 @@ namespace TransLedger.Controllers
 
                 if (model.PaymentType == "CASHIN")
                 {
-                    parameters.Add("@p_EntityAccountId", model.BookingPartyIdhiddentripnumber);
+                    parameters.Add("@p_EntityAccountId", model.Bookingpartyaccountid);
                     parameters.Add("@p_CreditedTo", model.Credited_Accountid);
                 }
                 else
