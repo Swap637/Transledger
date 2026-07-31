@@ -25,15 +25,14 @@ jobs:
 
 
     - name: Restore
-      run: dotnet restore
+      run: dotnet restore TransLedger.sln
 
 
     - name: Build
-      run: dotnet build --configuration Release
-
+      run: dotnet build TransLedger.sln --configuration Release
 
     - name: Publish
-      run: dotnet publish -c Release -o ./publish
+      run: dotnet publish TransLedger.csproj -c Release -o ./publish
 
 
     - name: Deploy to SmarterASP FTP
