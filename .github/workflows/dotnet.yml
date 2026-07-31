@@ -8,38 +8,39 @@ on:
 
 jobs:
 
-    # GitHub will create a Windows machine
+  build-deploy:
+
     runs-on: windows-latest
 
     steps:
 
-      # 1. Get your code from GitHub
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
 
-      # 2. Install .NET SDK
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
 
 
-      # 3. Download NuGet packages
-      - name: Restore Packages
-        run: dotnet restore
+    - name: Restore
+      run: dotnet restore
 
 
-      # 4. Compile your application
-      - name: Build Application
-        run: dotnet build --configuration Release
+    - name: Build
+      run: dotnet build --configuration Release
 
 
-      # 5. Run automated tests
-      - name: Run Tests
-        run: dotnet test --configuration Release
+    - name: Publish
+      run: dotnet publish -c Release -o ./publish
 
 
-      # 6. Create deployment files
-      - name: Publish Application
-        run: dotnet publish --configuration Release -o publish
+    - name: Deploy to SmarterASP FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./publish/
+        server-dir: /transportSite/
