@@ -50,14 +50,14 @@ BEGIN
 				ELSE
 				BEGIN
 			
-					SELECT @CrAccountId = @p_EntityAccountId;
+					SELECT @CrAccountId = @p_CreditedTo;
 
 					IF @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
 					BEGIN
 						SELECT @DrAccountId = EntityAccountId 
 						FROM tbl_EntityAccount WITH (NOLOCK)
 						WHERE EntityAccountType = 'ACCOUNT'
-						AND AccountType =  'BANK-ACCOUNT'
+						AND AccountType =  'BANK-ACCOUNT' AND EntityAccountId = ISNULL(@p_EntityAccountId,0)
 					END
 					ELSE
 					BEGIN
@@ -68,7 +68,7 @@ BEGIN
 				END
 
 				INSERT INTO tbl_PaymentDetails(TripEntryId,Amount,CreditedFrom,CreditedTo, PaymentDate, ModeOfPayment,OthrPymntMeth, UTRTranRefNumber, Remarks, RefId,CreatedOn)
-				VALUES(@P_TripEntryId,  @p_Amount,@P_CreditedFrom,@P_CreditedTo, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId,GETDATE())
+				VALUES(@P_TripEntryId,  @p_Amount,@CrAccountId,@DrAccountId, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId,GETDATE())
 			
 				IF ISNULL(@DrAccountId,0) <> 0 AND ISNULL(@CrAccountId,0) <> 0 AND ISNULL(@p_Amount,0) > 0
 				BEGIN 
@@ -137,19 +137,39 @@ GO
 BEGIN TRAN
 DECLARE @ERROR AS VARCHAR(500)
 EXEC pr_PaymentEntry
-@p_Action= 'MAKE-TRANSACTION',
-@p_PaymentType= 'CASHIN',
-@P_TripEntryId= 4,
-@p_ModeOfPayment = 'UPI',
-@p_Amount= 54654.00,
-@p_PaymentDate= '2026-07-31',
-@p_ReferenceNumber= 'SDFSD',
-@P_OthrPymntMeth= NULL,
-@p_Remarks= 'EDSDS',
-@p_EntityAccountId = 41,
-@p_CreditedTo=  41,
+@p_Action = 'MAKE-TRANSACTION',
+@p_PaymentType= 'CASHOUT',
+@P_TripEntryId= 2,
+@p_ModeOfPayment= 'UPI',
+@p_Amount= 6000.00,
+@p_PaymentDate= '2026-08-01',
+@p_ReferenceNumber= 'sgdfjhs98refbsd98fs',
+@P_OthrPymntMeth= null,
+@p_Remarks= 'sdsds',
+@p_EntityAccountId= 41,
+@p_CreditedTo = 17,
 @ERROR = @ERROR OUTPUT
 SELECT @ERROR
-SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC
+SELECT * FROM tbl_Ledger WITH (NOLOCK)
+SELECT * FROM tbl_PaymentDetails WITH (NOLOCK) ORDER BY CREATEDON DESC
 ROLLBACK TRAN
+
+--BEGIN TRAN -- CASH INN 
+--DECLARE @ERROR AS VARCHAR(500)
+--EXEC pr_PaymentEntry
+--@p_Action= 'MAKE-TRANSACTION',
+--@p_PaymentType= 'CASHIN',
+--@P_TripEntryId= 4,
+--@p_ModeOfPayment = 'UPI',
+--@p_Amount= 54654.00,
+--@p_PaymentDate= '2026-07-31',
+--@p_ReferenceNumber= 'SDFSD',
+--@P_OthrPymntMeth= NULL,
+--@p_Remarks= 'EDSDS',
+--@p_EntityAccountId = 41,
+--@p_CreditedTo=  41,
+--@ERROR = @ERROR OUTPUT
+--SELECT @ERROR
+--SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC
+--ROLLBACK TRAN
 

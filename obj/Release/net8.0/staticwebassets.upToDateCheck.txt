@@ -60,3 +60,10 @@ wwwroot\js\site.js
 wwwroot\favicon.ico
 wwwroot\css\Stepper.css
 wwwroot\css\site.css
+wwwroot\css\login.css
+wwwroot\Images\1291276.jpg
+wwwroot\Images\enhanced_Transport pic-png.png
+wwwroot\Images\images (1).jfif
+wwwroot\Images\images.jfif
+wwwroot\Images\Transport pic.png.jfif
+wwwroot\js\login.js
