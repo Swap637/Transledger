@@ -108,7 +108,8 @@ BEGIN
 	BEGIN
 		SELECT l.TransactionDate, ISNULL(ea.Name, ea.VehicleNumber) EntityAccount, l.Remark, pd.UTRTranRefNumber,
 		CASE l.TransactionType WHEN 'DEBIT' then l.Amount ELSE NULL END AS Debit,
-		CASE l.TransactionType WHEN 'CREDIT' then l.Amount ELSE NULL END AS Credit
+		CASE l.TransactionType WHEN 'CREDIT' then l.Amount ELSE NULL END AS Credit,
+		ModeOfPayment,UTRTranRefNumber,TransactionId
 		FROM tbl_Ledger l WITH (NOLOCK)
 		INNER JOIN tbl_PaymentDetails pd WITH (NOLOCK) on pd.RefId = l.RefId
 		INNER JOIN tbl_EntityAccount ea WITH (NOLOCK) on ea.EntityAccountId = l.EntityAccountId
@@ -175,4 +176,15 @@ ROLLBACK TRAN
 --SELECT @ERROR
 --SELECT * FROM tbl_PaymentDetails ORDER BY CREATEDON DESC
 --ROLLBACK TRAN
+
+--select * from tbl_Ledger
+--select * from tbl_PaymentDetails
+--select * from tbl_EntityAccount where EntityAccountId in (11,9,41)
+--select * from b_TripEntry where TripId=7
+
+--/*
+--	truncate table tbl_Ledger
+--	truncate table tbl_transaction
+--	truncate table tbl_PaymentDetails
+--*/
 

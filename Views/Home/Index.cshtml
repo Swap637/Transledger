@@ -67,7 +67,7 @@
 <div class="card shadow-sm border-0 mb-5">
     <div class="row p-3 align-items-center bg-light border-bottom m-0 rounded-top">
         <div class="col-md-6">
-            <h5 class="mb-0"><strong>Recent Transactions</strong></h5>
+            <h5 class="mb-0"><strong>Recent Trip</strong></h5>
         </div>
         <div class="col-md-4 ms-auto">
             <div class="input-group input-group-sm">
@@ -101,8 +101,8 @@
                         <td>@row["TripNumber"]</td>
                         <td>@row["VehicleNumber"]</td>
                         <td class="table-text-wrap">@row["Name"]</td>
-                        <td class="table-text-wrap">@row["LoadingPoint"]</td>
-                        <td class="table-text-wrap">@row["UnloadingPoint"]</td>
+                        <td class="table-text-wrap w-25">@row["LoadingPoint"]</td>
+                        <td class="table-text-wrap w-25">@row["UnloadingPoint"]</td>
                         <td>@(row["TripDate"] != DBNull.Value ? Convert.ToDateTime(row["TripDate"]).ToString("dd-MM-yyyy") : "")</td>
                         <td>
                             <select class="form-select form-select-sm @(row["TRIPSTATUS"]?.ToString() == "1" ? "status-completed" : row["TRIPSTATUS"]?.ToString() == "2" ? "status-cancelled" : "status-pending")" onchange="UpdateStatus(this,'@row["TripId"]')">
@@ -121,27 +121,69 @@
                 }
             </tbody>
         </table>
+       
     </div>
-
-    <!-- Pagination Footer Navigation Panel -->
-    @if (TripList.Rows.Count > 0)
-    {
-        <div class="d-flex justify-content-between align-items-center p-3 border-top bg-light rounded-bottom">
-            <div class="text-muted small" id="uxPaginationInfo">
-                Showing entries
-            </div>
-            <nav aria-label="Trip table pagination navigation">
-                <ul class="pagination pagination-sm mb-0" id="uxPaginationControls">
-                    <!-- Javascript automatically populates page nodes here -->
-                </ul>
-            </nav>
-        </div>
-}
+    <div class="d-flex justify-content-end align-items-center mt-2 gap-2">
+        <button class="btn btn-sm btn-primary bg-black" id="prevBtn">Previous</button>
+        <div id="pageNumbers" class="d-flex gap-1"></div>
+        <button class="btn btn-sm btn-primary bg-black" id="nextBtn">Next</button>
+    </div>
 </div>
 
 
 @section Scripts {
     <script>
+        let currentPage = 1;
+        let rowsPerPage = 5;
+        const rows = document.querySelectorAll("#tripTableBody .trip-row");
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        function displayTable() {
+            let start = (currentPage - 1) * rowsPerPage;
+            let end = start + rowsPerPage;
+            rows.forEach((row, index) => {
+                row.style.display =
+                    index >= start && index < end ? "" : "none";
+            });
+            createPageNumbers();
+        }
+
+        function createPageNumbers() {
+            let pageContainer = document.getElementById("pageNumbers");
+            pageContainer.innerHTML = "";
+
+            for(let i = 1; i <= totalPages; i++) {
+                let button = document.createElement("button");
+                button.innerText = i;
+                button.className =
+                    "btn btn-sm " +
+                    (i === currentPage
+                        ? "btn-primary bg-black"
+                        : "btn-outline-primary");
+                button.onclick = function () {
+                    currentPage = i;
+                    displayTable();
+                };
+                pageContainer.appendChild(button);
+            }
+        }
+
+        document.getElementById("prevBtn").onclick = function(){
+            if(currentPage > 1){
+                currentPage--;
+                displayTable();
+            }
+        };
+
+        document.getElementById("nextBtn").onclick = function(){
+            if(currentPage < totalPages){
+                currentPage++;
+                displayTable();
+            }
+        };
+
+        displayTable();
+
         $(document).ready(function () {
 
             $('#uxsearch').click(function () {

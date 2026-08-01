@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var currentPath = Context.Request.Path.Value.ToLower();
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,16 +29,17 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link fw-bold active" aria-current="page" href="/">Dashboard</a>
+                            <a class="nav-link fw-bold fs-6 @(currentPath == "/" ? "active" : "")"  aria-current="page" href="/">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-bold" aria-current="page" href="/registration">Registration</a>
+                            <a class="nav-link fw-bold fs-6 @(currentPath == "/registration" ? "active" : "")" aria-current="page" href="/registration">Registration</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-bold fs" aria-current="page" href="/accounts">Accounts</a>
+                            <a class="nav-link fw-bold fs-6 @(currentPath == "/accounts" ? "active" : "")"  aria-current="page" href="/accounts">Accounts</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle fw-bold fs-6 @(new[] { "/company-list", "/party-list", "/broker-list", "/vehicle-list", "/driver-list" }
+                                                              .Contains(currentPath) ? "active" : "") href="javascript:void(0);" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 List Of
                             </a>
                             <ul class="dropdown-menu">
@@ -50,10 +54,10 @@
                             <a class="nav-link fw-bold" aria-current="page" href="/transactions">Transactions</a>
                         </li> *@
                         <li class="nav-item">
-                            <a class="nav-link fw-bold" aria-current="page" href="/ledger">Ledger</a>
+                            <a class="nav-link fw-bold fs-6 @(currentPath == "/ledger" ? "active" : "")"  aria-current="page" href="/ledger">Ledger</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link fw-bold" aria-current="page" href="#">Reports</a>
+                            <a class="nav-link fw-bold fs-6 @(currentPath == "/Reports" ? "active" : "")" aria-current="page" href="#">Reports</a>
                         </li>
                     </ul>
                     <form method="post" action="/auth/logout">
@@ -80,7 +84,7 @@
 
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-
+  
     <script>
         $(document).ready(function () {
             $('.data-table').DataTable({
@@ -88,6 +92,10 @@
                 pageLength: 10,
                 ordering: true
             });
+
+            $('#navbarSupportedContent').addeventlistner((){
+
+            })
         });
     </script>
 

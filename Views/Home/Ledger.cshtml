@@ -28,69 +28,127 @@
             <p class="text-muted">You can find your all ledger transactions here.</p>
         </div>
 
+            <!-- Scrollable Responsive Container -->
+   
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-
-                <thead>
-                    <tr class="text-center">
-                        <th width="60"></th>
-                        <th>Date</th>
-                        <th>Entity/Account</th>
-                        <th>Remark</th>
-                        <th>Reference Number</th>
-                        <th>Debit</th>
-                        <th>Credit</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @if (dt != null && dt.Rows.Count > 0)
-                    {
-                        int i = 1;
-                        foreach (DataRow row in dt.Rows)
-                        {
-                            string debit = "";
-                            string credit = "";
-
-                            if (row["Debit"] != DBNull.Value)
-                            {
-                                debit = "- " + Convert.ToDecimal(row["Debit"]).ToString("0.00");
-                            }
-
-                            if (row["Credit"] != DBNull.Value)
-                            {
-                                credit = "+ " + Convert.ToDecimal(row["Credit"]).ToString("0.00");
-                            }
-
-                            <tr>
-                                <td>@i</td>
-                                <td>@Convert.ToDateTime(row["TransactionDate"]).ToString("dd-MMM-yyyy")</td>
-                                <td>@row["EntityAccount"]</td>
-                                <td>@row["Remark"]</td>
-                                <td>@row["UTRTranRefNumber"]</td>
-                                <td class="text-danger text-end">@debit</td>
-                                <td class="text-success text-end">@credit</td>
-                            </tr>
-
-                            i++;
-                        }
-                    }
-                    else
-                    {
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-hover mb-0" id="uxledgertable">
+                    <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
                         <tr>
-                            <td colspan="5" class="py-5">
-                                <h6 class="text-center text-muted"><b>No data present.</b></h6>
-                            </td>
+                            <th width="60"></th>
+                            <th>Transaction Date</th>
+                            <th>Transaction Number</th>
+                            <th>Entity/Account</th>
+                            <th>Reference Number</th>
+                            <th>Mode Of Payment</th>
+                            <th>Debit</th>
+                            <th>Credit</th>
+                        <th>Remark</th>
                         </tr>
-                    }
-                </tbody>
-
-            </table>
+                    </thead>
+                <tbody id="ledgertablebody">
+                        @if (dt != null && dt.Rows.Count > 0)
+                        {
+                            int i = 1;
+                            foreach (DataRow row in dt.Rows)
+                            {
+                                string debit = "";
+                                string credit = "";
+                                if (row["Debit"] != DBNull.Value)
+                                {
+                                    debit = "- " + Convert.ToDecimal(row["Debit"]).ToString("0.00");
+                                }
+                                if (row["Credit"] != DBNull.Value)
+                                {
+                                    credit = "+ " + Convert.ToDecimal(row["Credit"]).ToString("0.00");
+                                }
+                            <tr class="trip-row">
+                                    <td>@i</td>
+                                    <td>@Convert.ToDateTime(row["TransactionDate"]).ToString("dd-MMM-yyyy HH:MM:ss")</td>
+                                    <td>@row["TransactionId"]</td>
+                                    <td>@row["EntityAccount"]</td>
+                                    <td>@row["UTRTranRefNumber"]</td>
+                                    <td>@row["ModeOfPayment"]</td>
+                                    <td class="text-danger">@debit</td>
+                                    <td class="text-success">@credit</td>
+                                <td>@row["Remark"]</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="py-5">
+                                    <h6 class="text-center text-muted"><b>No data present.</b></h6>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        <div class="d-flex justify-content-end align-items-center mt-2 gap-2">
+            <button class="btn btn-sm btn-primary bg-black" id="prevBtn">Previous</button>
+            <div id="pageNumbers" class="d-flex gap-1"></div>
+            <button class="btn btn-sm btn-primary bg-black" id="nextBtn">Next</button>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        let currentPage = 1;
+         let rowsPerPage = 6;
+         const rows = document.querySelectorAll("#ledgertablebody .trip-row");
+         const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+         function displayTable() {
+             let start = (currentPage - 1) * rowsPerPage;
+             let end = start + rowsPerPage;
+             rows.forEach((row, index) => {
+                 row.style.display =
+                     index >= start && index < end ? "" : "none";
+             });
+             createPageNumbers();
+         }
+
+         function createPageNumbers() {
+             let pageContainer = document.getElementById("pageNumbers");
+             pageContainer.innerHTML = "";
+
+             for(let i = 1; i <= totalPages; i++) {
+                 let button = document.createElement("button");
+                 button.innerText = i;
+                 button.className =
+                     "btn btn-sm " +
+                     (i === currentPage
+                         ? "btn-primary bg-black"
+                         : "btn-outline-primary");
+                 button.onclick = function () {
+                     currentPage = i;
+                     displayTable();
+                 };
+                 pageContainer.appendChild(button);
+             }
+         }
+
+         document.getElementById("prevBtn").onclick = function(){
+             if(currentPage > 1){
+                 currentPage--;
+                 displayTable();
+             }
+         };
+
+         document.getElementById("nextBtn").onclick = function(){
+             if(currentPage < totalPages){
+                 currentPage++;
+                 displayTable();
+             }
+         };
+
+         displayTable();
+
+
+    </script>
 }
