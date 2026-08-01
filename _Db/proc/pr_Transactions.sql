@@ -33,10 +33,10 @@ BEGIN TRAN
 	END
 
  INSERT INTO tbl_Ledger(EntityAccountId, TransactionId, Amount, TransactionType, TransactionDate, Remark, RefId)  
- VALUES(@p_DrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'DEBIT', GETDATE(), @p_Remark, @p_RefId)  
+ VALUES(@p_DrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'DEBIT', @p_TransactionDate, @p_Remark, @p_RefId)  
   
  INSERT INTO tbl_Ledger(EntityAccountId, TransactionId, Amount, TransactionType, TransactionDate, Remark, RefId)  
- VALUES(@p_CrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'CREDIT', GETDATE(), @p_Remark, @p_RefId)  
+ VALUES(@p_CrEntityAccountId, @NewTransactionId, @p_TransactionAmount, 'CREDIT', @p_TransactionDate, @p_Remark, @p_RefId)  
   
  UPDATE tbl_EntityAccount  
  SET Balance = ISNULL(Balance, 0) - ISNULL(@p_TransactionAmount, 0)  
@@ -69,13 +69,5 @@ GO
 --ROLLBACK TRAN
 
 
-select * from tbl_Ledger
-select * from tbl_PaymentDetails
-select * from tbl_EntityAccount where EntityAccountId in (11,9,41)
-/*
-	truncate table tbl_Ledger
-	truncate table tbl_transaction
-		truncate table tbl_PaymentDetails
-*/
 
 

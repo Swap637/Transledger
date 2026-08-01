@@ -36,13 +36,15 @@ BEGIN
 					
 					IF @p_ModeOfPayment in ('UPI', 'TRANSFER', 'CHEQUE', 'OTHER')
 					BEGIN
-						SELECT @CrAccountId = EntityAccountId FROM tbl_EntityAccount
+						SELECT @CrAccountId = EntityAccountId 
+						FROM tbl_EntityAccount WITH (NOLOCK)
 						WHERE EntityAccountType = 'ACCOUNT'
 						AND AccountType =  'BANK-ACCOUNT'
 					END
 					ELSE
 					BEGIN
-						SELECT @CrAccountId = EntityAccountId FROM tbl_EntityAccount
+						SELECT @CrAccountId = EntityAccountId 
+						FROM tbl_EntityAccount WITH (NOLOCK)
 						WHERE EntityAccountType = 'ACCOUNT'
 						AND AccountType =  'CASH-IN-HAND'
 					END
@@ -61,14 +63,15 @@ BEGIN
 					END
 					ELSE
 					BEGIN
-						SELECT @DrAccountId = EntityAccountId FROM tbl_EntityAccount WITH (NOLOCK)
+						SELECT @DrAccountId = EntityAccountId
+						FROM tbl_EntityAccount WITH (NOLOCK)
 						WHERE EntityAccountType = 'ACCOUNT'
 						AND AccountType =  'CASH-IN-HAND'
 					END
 				END
 
 				INSERT INTO tbl_PaymentDetails(TripEntryId,Amount,CreditedFrom,CreditedTo, PaymentDate, ModeOfPayment,OthrPymntMeth, UTRTranRefNumber, Remarks, RefId,CreatedOn)
-				VALUES(@P_TripEntryId,  @p_Amount,@CrAccountId,@DrAccountId, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId,GETDATE())
+				VALUES(@P_TripEntryId,  @p_Amount,@DrAccountId,@CrAccountId, @p_PaymentDate, @p_ModeOfPayment,@P_OthrPymntMeth,@p_ReferenceNumber, @p_Remarks, @RefId,@p_PaymentDate)
 			
 				IF ISNULL(@DrAccountId,0) <> 0 AND ISNULL(@CrAccountId,0) <> 0 AND ISNULL(@p_Amount,0) > 0
 				BEGIN 

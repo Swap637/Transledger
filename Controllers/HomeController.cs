@@ -331,6 +331,7 @@ namespace TransLedger.Controllers
         {
             try
             {
+                DateTime paymentDate = model.Date.Date.Add(DateTime.Now.TimeOfDay);
                 Dictionary<string, Object> parameters = new Dictionary<string, object>()
                 {
                     { "@p_Action", "MAKE-TRANSACTION" },
@@ -338,7 +339,7 @@ namespace TransLedger.Controllers
                     { "@P_TripEntryId", model.tripNumber },
                     { "@p_ModeOfPayment", model.ModeOfPayment },
                     { "@p_Amount", model.Amount},
-                    { "@p_PaymentDate", model.Date },
+                    { "@p_PaymentDate", paymentDate},
                     { "@p_ReferenceNumber", model.ReferenceNumber },
                     { "@P_OthrPymntMeth", string.IsNullOrWhiteSpace(model.OtherPaymentMethod) ? "" : model.OtherPaymentMethod },
                     { "@p_Remarks", model.Remarks }

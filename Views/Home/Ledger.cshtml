@@ -28,6 +28,7 @@
             <p class="text-muted">You can find your all ledger transactions here.</p>
         </div>
 
+
         <div class="table-responsive">
             <table class="table table-hover align-middle">
 
@@ -67,7 +68,7 @@
                                 <td>@Convert.ToDateTime(row["TransactionDate"]).ToString("dd-MMM-yyyy")</td>
                                 <td>@row["EntityAccount"]</td>
                                 <td>@row["Remark"]</td>
-                                <td>@row["ReferenceNumber"]</td>
+                                <td>@row["UTRTranRefNumber"]</td>
                                 <td class="text-danger text-end">@debit</td>
                                 <td class="text-success text-end">@credit</td>
                             </tr>
