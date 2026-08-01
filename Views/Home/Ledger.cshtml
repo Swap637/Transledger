@@ -29,14 +29,84 @@
         </div>
 
             <!-- Scrollable Responsive Container -->
-   
-
+  
             <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-            <table class="table table-hover mb-0" id="uxledgertable">
+                <div class="d-flex align-items-end gap-3" style="margin-bottom:3px;">
+                    <div class="col-md-4">
+                        <label class="form-label">Filter</label>
+                        <select class="form-control" id="uxfilter" required>
+                            <option value="">-- Select Filter --</option>
+                            <option value="TranDate">Transaction Date</option>
+                            <option value="TripNumber">Trip Number</option>
+                            <option value="TransactionNumber">Transaction Number</option>
+                            <option value="REFERENCENUMBER">Reference Number</option>
+                            <option value="PaymentMode">Payment Mode</option>
+                            <option value="PaymentType">Payment Type</option>
+                        </select>
+                    </div>
+                
+                    <div class="col-md-4 d-none" id="uxtrandatediv"> @*Transaction date*@
+                        <label class="form-label">
+                            Transaction Date <span class="text-danger">*</span>
+                        </label>
+                        <input class="form-control"
+                               type="date"
+                               value="@DateTime.Now.ToString("yyyy-MM-dd")"
+                               max="@DateTime.Now.ToString("yyyy-MM-dd")"
+                               required />
+                    </div>
+                    <div class="col-md-4 d-none" id="uxTripNumberdiv"> @*Trip Number*@
+                            <label class="form-label">
+                               Trip Number <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="uxtripnumber" autocomplete="new-password" class="form-control" placeholder="Enter Trip Number" required />
+                    </div>
+                   
+                    <div class="col-md-4 d-none" id="uxTransactionNumberdiv"> @*Transaction Number*@
+                        <label class="form-label">
+                           Transaction Number <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="uxTransactionNumber" autocomplete="new-password" class="form-control" placeholder="Enter Transaction Number" required />
+                    </div>
+
+                    <div class="col-md-4 d-none" id="uxRefNumberdiv"> @*Reference Number*@
+                        <label class="form-label">Refernce Number <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" id="uxRefNumber" autocomplete="new-password" class="form-control" placeholder="Enter Reference Number" required />
+                    </div>
+
+                    <div class="col-md-4 d-none" id="uxPaymentmodediv">@*Payment Mode*@
+                        <label class="form-label">
+                            Payment Mode <span class="text-danger">*</span> </label>
+
+                        <select class="form-control" id="uxpaymentMode" required>
+                            <option value="">Select Payment Mode</option>
+                            <option value="CASH">Cash</option>
+                            <option value="UPI">UPI</option>
+                            <option value="TRANSFER">Bank Transfer</option>
+                            <option value="CHEQUE">Cheque</option>
+                            <option value="OTHER">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 d-none" id="uxPaymenttypediv">@*Payment Type*@
+                        <label class="form-label">Payment Type</label><span class="text-danger">*</span>
+                        <select class="form-control" id="uxPaymentType" required>
+                        <option value="">Select Payment Type</option>
+                            <option value="Credit">Credit</option>
+                            <option value="Debit">Debit</option>
+                        </select>
+                    </div>
+                  <button class="btn btn-sm btn-primary bg-black d-none" id="uxapplyfilter">Apply</button>
+              </div>
+               <br />
+             <table class="table table-hover mb-0" id="uxledgertable">
                     <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
                         <tr>
+                        <th width="60">Action</th>
                             <th width="60"></th>
                             <th>Transaction Date</th>
+                            <th>Trip Number</th>
                             <th>Transaction Number</th>
                             <th>Entity/Account</th>
                             <th>Reference Number</th>
@@ -46,49 +116,50 @@
                         <th>Remark</th>
                         </tr>
                     </thead>
-                <tbody id="ledgertablebody">
-                        @if (dt != null && dt.Rows.Count > 0)
-                        {
-                            int i = 1;
-                            foreach (DataRow row in dt.Rows)
+                    <tbody id="ledgertablebody">
+                            @if (dt != null && dt.Rows.Count > 0)
                             {
-                                string debit = "";
-                                string credit = "";
-                                if (row["Debit"] != DBNull.Value)
+                                int i = 1;
+                                foreach (DataRow row in dt.Rows)
                                 {
-                                    debit = "- " + Convert.ToDecimal(row["Debit"]).ToString("0.00");
+                                    string debit = "";
+                                    string credit = "";
+                                    if (row["Debit"] != DBNull.Value)
+                                    {
+                                        debit = "- " + Convert.ToDecimal(row["Debit"]).ToString("0.00");
+                                    }
+                                    if (row["Credit"] != DBNull.Value)
+                                    {
+                                        credit = "+ " + Convert.ToDecimal(row["Credit"]).ToString("0.00");
+                                    }
+                                <tr class="trip-row">
+                                    <td><button class="btn btn-sm btn-primary bg-black" id="Delete">Delete</button></td>
+                                        <td>@i</td>
+                                        <td>@Convert.ToDateTime(row["TransactionDate"]).ToString("dd-MMM-yyyy HH:MM:ss")</td>
+                                    <td>@row["TripNumber"]</td>
+                                        <td>@row["TransactionId"]</td>
+                                        <td>@row["EntityAccount"]</td>
+                                        <td>@row["UTRTranRefNumber"]</td>
+                                        <td>@row["ModeOfPayment"]</td>
+                                        <td class="text-danger">@debit</td>
+                                        <td class="text-success">@credit</td>
+                                    <td>@row["Remark"]</td>
+                                    </tr>
+                                    i++;
                                 }
-                                if (row["Credit"] != DBNull.Value)
-                                {
-                                    credit = "+ " + Convert.ToDecimal(row["Credit"]).ToString("0.00");
-                                }
-                            <tr class="trip-row">
-                                    <td>@i</td>
-                                    <td>@Convert.ToDateTime(row["TransactionDate"]).ToString("dd-MMM-yyyy HH:MM:ss")</td>
-                                    <td>@row["TransactionId"]</td>
-                                    <td>@row["EntityAccount"]</td>
-                                    <td>@row["UTRTranRefNumber"]</td>
-                                    <td>@row["ModeOfPayment"]</td>
-                                    <td class="text-danger">@debit</td>
-                                    <td class="text-success">@credit</td>
-                                <td>@row["Remark"]</td>
-                                </tr>
-                                i++;
                             }
-                        }
-                        else
-                        {
-                            <tr>
-                                <td colspan="5" class="py-5">
-                                    <h6 class="text-center text-muted"><b>No data present.</b></h6>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="py-5">
+                                        <h6 class="text-center text-muted"><b>No data present.</b></h6>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
                 </table>
-            </div>
+         </div>
         <div class="d-flex justify-content-end align-items-center mt-2 gap-2">
-
             <button class="btn btn-sm btn-primary bg-black" id="prevBtn">Previous</button>
             <div id="pageNumbers" class="d-flex gap-1"></div>
             <button class="btn btn-sm btn-primary bg-black" id="nextBtn">Next</button>
@@ -98,6 +169,133 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $('#uxfilter').on('change', function () {
+            var uxfiltervalue = $('#uxfilter').val();
+           if(uxfiltervalue=="TranDate"){
+                $('#uxtrandatediv').removeClass('d-none');
+                $('#uxPaymenttypediv').addClass('d-none');
+                $('#uxPaymentmodediv').addClass('d-none');
+                $('#uxRefNumberdiv').addClass('d-none');
+                $('#uxTransactionNumberdiv').addClass('d-none');
+                $('#uxTripNumberdiv').addClass('d-none');
+           }
+           else if(uxfiltervalue=="TripNumber"){
+               $('#uxTripNumberdiv').removeClass('d-none');
+               $('#uxtrandatediv').addClass('d-none');
+               $('#uxPaymenttypediv').addClass('d-none');
+               $('#uxPaymentmodediv').addClass('d-none');
+               $('#uxRefNumberdiv').addClass('d-none');
+               $('#uxTransactionNumberdiv').addClass('d-none');
+           }
+           else if(uxfiltervalue=="TransactionNumber"){
+               $('#uxTransactionNumberdiv').removeClass('d-none');
+               $('#uxTripNumberdiv').addClass('d-none');
+               $('#uxtrandatediv').addClass('d-none');
+               $('#uxPaymenttypediv').addClass('d-none');
+               $('#uxPaymentmodediv').addClass('d-none');
+               $('#uxRefNumberdiv').addClass('d-none');
+           }
+           else if(uxfiltervalue=="REFERENCENUMBER"){
+               $('#uxRefNumberdiv').removeClass('d-none');
+               $('#uxTransactionNumberdiv').addClass('d-none');
+               $('#uxTripNumberdiv').addClass('d-none');
+               $('#uxtrandatediv').addClass('d-none');
+               $('#uxPaymenttypediv').addClass('d-none');
+               $('#uxPaymentmodediv').addClass('d-none');
+           }
+           else if(uxfiltervalue=="PaymentMode"){
+               $('#uxPaymentmodediv').removeClass('d-none');
+               $('#uxRefNumberdiv').addClass('d-none');
+               $('#uxTransactionNumberdiv').addClass('d-none');
+               $('#uxTripNumberdiv').addClass('d-none');
+               $('#uxtrandatediv').addClass('d-none');
+               $('#uxPaymenttypediv').addClass('d-none');
+           }
+           else if(uxfiltervalue=="PaymentType"){
+               $('#uxPaymenttypediv').removeClass('d-none');
+               $('#uxPaymentmodediv').addClass('d-none');
+               $('#uxRefNumberdiv').addClass('d-none');
+               $('#uxTransactionNumberdiv').addClass('d-none');
+               $('#uxTripNumberdiv').addClass('d-none');
+               $('#uxtrandatediv').addClass('d-none');
+           }
+           else{
+               $('#uxPaymenttypediv').addClass('d-none');
+               $('#uxPaymentmodediv').addClass('d-none');
+               $('#uxRefNumberdiv').addClass('d-none');
+               $('#uxTransactionNumberdiv').addClass('d-none');
+               $('#uxTripNumberdiv').addClass('d-none');
+               $('#uxtrandatediv').addClass('d-none');
+           }
+
+           if (uxfiltervalue == ""){
+             $('#uxapplyfilter').addClass('d-none')
+           }else{
+             $('#uxapplyfilter').removeClass('d-none')
+           }
+        });
+            $('#uxapplyfilter').on('click', function () {
+
+            var uxRefNumber = $('#uxRefNumber').val();
+            var uxTransactionNumber = $('#uxTransactionNumber').val();
+            var uxTripNumber = $('#uxtripnumber').val();
+            var uxtrandate = $('#uxtrandate').val();
+            var uxPaymentType = $('#uxPaymentType').val();
+            var uxpaymentMode = $('#uxpaymentMode').val();
+
+              if (
+                    uxPaymentType == "" &&
+                    uxpaymentMode == "" &&
+                    uxRefNumber == "" &&
+                    uxTransactionNumber == "" &&
+                    uxTripNumber == "" &&
+                    $('#uxtrandatediv').hasClass('d-none')
+                ) {
+                    alert("Please enter the required value to apply filter.");
+                    return;
+                }
+
+            if (!$('#uxPaymentmodediv').hasClass('d-none')) {
+               if(uxpaymentMode == ""){
+                 alert("Please select payment mode.");
+                 return;
+               }
+            }
+
+            if (!$('#uxPaymenttypediv').hasClass('d-none')) {
+               if(uxPaymenttype == ""){
+                 alert("Please select payment type.");
+                 return;
+               }
+            }
+
+            if ($('#uxtrandatediv').hasClass('d-none')) {
+              uxtrandate = ""
+            }
+
+            $.ajax({
+                url: '/Home/Ledger',
+                type: "POST",
+                data: {
+                    PaymentType: uxPaymentType,
+                    PaymentMode: uxpaymentMode,
+                    ReferenceNumber: uxRefNumber,
+                    TransactionNumber: uxTransactionNumber,
+                    TripNumber: uxTripNumber,
+                    TripDate: uxtrandate
+                },
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (xhr) {
+                    console.log(xhr.responseText);
+                }
+            });
+
+        });
+    </script>
+
     <script>
         let currentPage = 1;
          let rowsPerPage = 6;

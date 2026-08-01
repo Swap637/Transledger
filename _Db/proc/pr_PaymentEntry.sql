@@ -4,24 +4,29 @@ BEGIN
 END
 GO
 CREATE PROC pr_PaymentEntry(
-	@p_Action          VARCHAR(50)  = 'GET-LEDGER',
-	@P_TripEntryId     INT          = NULL,
-	@P_CreditedFrom    VARCHAR(50)  = NULL,
-	@P_CreditedTo      VARCHAR(50)  = NULL,
-	@P_OthrPymntMeth   VARCHAR(50)  = NULL,
-	@p_PaymentType     VARCHAR(50)  = NULL,
-	@p_EntityAccountId INT          = NULL,
-	@p_Amount          MONEY        = NULL,
-	@p_PaymentDate     DATETIME     = NULL,
-	@p_ModeOfPayment   VARCHAR(25)  = NULL,
-	@p_ReferenceNumber VARCHAR(25)  = NULL,
-	@p_Remarks         VARCHAR(500) = NULL,
-	@ERROR             VARCHAR(500) = NULL OUTPUT
+	@p_Action          VARCHAR(50)   = 'GET-LEDGER',
+	@P_TripEntryId     INT           = NULL,
+	@P_CreditedFrom    VARCHAR(50)   = NULL,
+	@P_CreditedTo      VARCHAR(50)   = NULL,
+	@P_OthrPymntMeth   VARCHAR(50)   = NULL,
+	@p_PaymentType     VARCHAR(50)   = NULL,
+	@p_EntityAccountId INT           = NULL,
+	@p_Amount          MONEY         = NULL,
+	@p_PaymentDate     DATETIME      = NULL,
+	@p_ModeOfPayment   VARCHAR(25)   = NULL,
+	@p_ReferenceNumber VARCHAR(25)   = NULL,
+	@p_TRIPNumber      VARCHAR(100)  = NULL,
+	@p_TRANNumber      VARCHAR(100)  = NULL,
+	@p_Remarks         VARCHAR(500)  = NULL,
+	@p_isdebug         INT           = 0,
+	@ERROR             VARCHAR(500)  = NULL OUTPUT
 )
 AS
 BEGIN
-	DECLARE @RefId UNIQUEIDENTIFIER, @DrAccountId INT, @CrAccountId  INT
-
+  --<VARIABLE DECLARATION>
+   DECLARE @RefId UNIQUEIDENTIFIER, @DrAccountId INT, @CrAccountId  INT,@QUERY AS VARCHAR(MAX)
+  --</VARIABLE DECLARATION>
+	
 	IF @p_Action = 'MAKE-TRANSACTION'
 	BEGIN
 		SELECT @RefId = NEWID();	
@@ -106,34 +111,73 @@ BEGIN
 
 	ELSE IF @p_Action = 'GET-LEDGER'
 	BEGIN
-		SELECT l.TransactionDate, ISNULL(ea.Name, ea.VehicleNumber) EntityAccount, l.Remark, pd.UTRTranRefNumber,
-		CASE l.TransactionType WHEN 'DEBIT' then l.Amount ELSE NULL END AS Debit,
-		CASE l.TransactionType WHEN 'CREDIT' then l.Amount ELSE NULL END AS Credit,
-		ModeOfPayment,UTRTranRefNumber,TransactionId
+		SET @QUERY = 'SELECT l.TransactionDate, ISNULL(ea.Name, ea.VehicleNumber) EntityAccount, l.Remark, pd.UTRTranRefNumber,
+		CASE l.TransactionType WHEN ''DEBIT'' then l.Amount ELSE NULL END AS Debit,
+		CASE l.TransactionType WHEN ''CREDIT'' then l.Amount ELSE NULL END AS Credit,
+		ModeOfPayment,UTRTranRefNumber,TransactionId,TripNumber
 		FROM tbl_Ledger l WITH (NOLOCK)
 		INNER JOIN tbl_PaymentDetails pd WITH (NOLOCK) on pd.RefId = l.RefId
 		INNER JOIN tbl_EntityAccount ea WITH (NOLOCK) on ea.EntityAccountId = l.EntityAccountId
+		LEFT  JOIN  B_TRIPENTRY       B   WITH (NOLOCK) ON B.TripId = pd.TripEntryId
+		WHERE 1 = 1 '
+
+		IF @p_PaymentDate IS NOT NULL -- Tran Date
+		BEGIN
+			SET @QUERY = @QUERY + ' AND CONVERT(DATE, l.TransactionDate) = ''' + CONVERT(VARCHAR(10), @p_PaymentDate, 120) +''''
+		END
+		IF @p_TRIPNumber IS NOT NULL -- Trip Number
+		BEGIN
+			SET @QUERY = @QUERY + ' AND TripNumber = ''' + CONVERT(VARCHAR(100), @p_TRIPNumber, 120) +''''
+		END
+		IF @p_TRANNumber IS NOT NULL -- Transaction Number
+		BEGIN
+			SET @QUERY = @QUERY + ' AND TransactionId = ''' + CONVERT(VARCHAR(200), @p_TRANNumber, 120) +''''
+		END
+
+		IF @p_ReferenceNumber IS NOT NULL -- REFERENCE NUMBER
+		BEGIN
+			SET @QUERY = @QUERY +
+				' AND REPLACE(LTRIM(RTRIM(UTRTranRefNumber)), '' '', '''') = ''' +REPLACE(LTRIM(RTRIM(@p_ReferenceNumber)), ' ', '') + ''''
+		END
+
+		IF @p_ModeOfPayment IS NOT NULL -- Payment Mode -- DropDown
+		BEGIN
+			SET @QUERY = @QUERY +
+				' AND ModeOfPayment = ''' + @p_ModeOfPayment+ ''''
+		END
+
+		IF @p_PaymentType IS NOT NULL -- Payment Type  --- DropDown
+		BEGIN
+			SET @QUERY = @QUERY +
+				' AND l.TransactionType = ''' + @p_PaymentType+ '''' 
+		END
+
+		IF @p_isdebug = 1
+		 PRINT(@QUERY)
+
+		EXEC(@QUERY)
+		
 	END
 
 	ELSE IF @p_Action ='GET-TRIPNUMBER'
 	BEGIN 
-	  SELECT TripId,TripNumber,ISNULL(AmtForBkingPrty,0) Amount ,Name,BookingPartyId
-      FROM b_TripEntry B WITH (NOLOCK)
-	  INNER JOIN tbl_EntityAccount P WITH (NOLOCK) ON P.EntityAccountId = B.BookingPartyId
-	  WHERE ISNULL(TRIPSTATUS,0)  = 0
 
-	  SELECT EntityAccountId,ISNULL(AccountNumber,'') AccountNumber,Name
-	  FROM tbl_EntityAccount WITH (NOLOCK)
-	  WHERE ISNULL(EntityAccountType,'') = 'ACCOUNT'
+	   SELECT TripId,TripNumber,ISNULL(AmtForBkingPrty,0) Amount ,Name,BookingPartyId
+       FROM b_TripEntry B WITH (NOLOCK)
+	   INNER JOIN tbl_EntityAccount P WITH (NOLOCK) ON P.EntityAccountId = B.BookingPartyId
+  	   WHERE ISNULL(TRIPSTATUS,0)  = 0
+
+	   SELECT EntityAccountId,ISNULL(AccountNumber,'') AccountNumber,Name
+	   FROM tbl_EntityAccount WITH (NOLOCK)
+	   WHERE ISNULL(EntityAccountType,'') = 'ACCOUNT'
 	  
-
-		SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'PARTY'
-		UNION ALL -- BROKER
-		SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'BROKER'
-		UNION ALL -- COMPNAY
-		SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'COMPANY'
-		UNION ALL -- VEHICLE
-		SELECT VehicleNumber,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'VEHICLE'
+	   SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'PARTY'
+	   UNION ALL -- BROKER
+	   SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'BROKER'
+	   UNION ALL -- COMPNAY
+	   SELECT Name,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'COMPANY'
+	   UNION ALL -- VEHICLE
+	   SELECT VehicleNumber,EntityAccountId FROM tbl_EntityAccount WHERE EntityAccountType = 'VEHICLE'
 	 
 	END
 END
@@ -141,21 +185,22 @@ GO
 BEGIN TRAN
 DECLARE @ERROR AS VARCHAR(500)
 EXEC pr_PaymentEntry
-@p_Action = 'MAKE-TRANSACTION',
-@p_PaymentType= 'CASHOUT',
-@P_TripEntryId= 2,
-@p_ModeOfPayment= 'UPI',
-@p_Amount= 6000.00,
-@p_PaymentDate= '2026-08-01',
-@p_ReferenceNumber= 'sgdfjhs98refbsd98fs',
-@P_OthrPymntMeth= null,
-@p_Remarks= 'sdsds',
-@p_EntityAccountId= 41,
-@p_CreditedTo = 17,
-@ERROR = @ERROR OUTPUT
-SELECT @ERROR
-SELECT * FROM tbl_Ledger WITH (NOLOCK)
-SELECT * FROM tbl_PaymentDetails WITH (NOLOCK) ORDER BY CREATEDON DESC
+@p_Action = 'GET-LEDGER',
+--@p_PaymentType= 'CASHOUT',
+  @p_isdebug = 1
+--@P_TripEntryId= 2,
+--@p_ModeOfPayment= 'UPI',
+--@p_Amount= 6000.00,
+--@p_PaymentDate= '2026-08-01',
+--@p_ReferenceNumber= 'sgdfjhs98refbsd98fs',
+--@P_OthrPymntMeth= null,
+--@p_Remarks= 'sdsds',
+--@p_EntityAccountId= 41,
+--@p_CreditedTo = 17,
+--@ERROR = @ERROR OUTPUT
+--SELECT @ERROR
+--SELECT * FROM tbl_Ledger WITH (NOLOCK)
+--SELECT * FROM tbl_PaymentDetails WITH (NOLOCK) ORDER BY CREATEDON DESC
 ROLLBACK TRAN
 
 --BEGIN TRAN -- CASH INN 

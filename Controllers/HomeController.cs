@@ -397,6 +397,47 @@ namespace TransLedger.Controllers
             return View();
         }
 
+        [HttpPost("Home/Ledger")]
+        public IActionResult Ledger(FilterModel model)
+        {
+            try
+            {
+                DateTime paymentDate = model.TripDate.Date.Add(DateTime.Now.TimeOfDay);
+                Dictionary<string, Object> parameters = new Dictionary<string, object>()
+                {
+                    { "@p_Action", "GET-LEDGER" },
+                    { "@p_PaymentType", model.PaymentType },
+                    { "@p_TRIPNumber",model.TripNumber},
+                    { "@p_TRANNumber", model.TransactionNumber},
+                    { "@p_ReferenceNumber", model.ReferenceNumber },
+                    { "@p_ModeOfPayment", model.PaymentMode },
+                    { "@p_PaymentDate", paymentDate },
+                    { "@ERROR", "" }
+                };
+                string error = parameters["@ERROR"]?.ToString();
+
+                if (!string.IsNullOrWhiteSpace(error))
+                {
+                    throw new Exception(error);
+                }
+
+                DataSet ds = _dataAccess.ExecuteSP("pr_EntityAccount", parameters);
+                if (ds != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    ViewBag.List = ds.Tables[0];
+                }
+
+                return View();          
+            }
+            catch (Exception ex)
+            {
+                TempData["AlertType"] = "danger";
+                TempData["AlertMsg"] = ex.Message;
+
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("accounts")]
         public IActionResult Accounts()
         {
